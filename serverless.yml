@@ -51,6 +51,7 @@ functions:
       - httpApi:
           path: /tasks
           method: get
+          authorizer: jwtAuthorizer
 
   createTask:
     handler: src/handlers/createTask.handler
@@ -58,6 +59,7 @@ functions:
       - httpApi:
           path: /tasks
           method: post
+          authorizer: jwtAuthorizer
 
   updateTask:
     handler: src/handlers/updateTask.handler
@@ -65,6 +67,7 @@ functions:
       - httpApi:
           path: /tasks/{id}
           method: put
+          authorizer: jwtAuthorizer
 
   signUp:
     handler: src/handlers/auth.signUp

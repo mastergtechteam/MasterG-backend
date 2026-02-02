@@ -201,7 +201,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
               },
               "Handler": "src/authorizers/tokenAuthorizer.handler",
               "Runtime": "nodejs18.x",
@@ -235,7 +235,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
               },
               "Handler": "src/handlers/getTask.handler",
               "Runtime": "nodejs18.x",
@@ -269,7 +269,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
               },
               "Handler": "src/handlers/createTask.handler",
               "Runtime": "nodejs18.x",
@@ -303,7 +303,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
               },
               "Handler": "src/handlers/updateTask.handler",
               "Runtime": "nodejs18.x",
@@ -337,7 +337,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.signUp",
               "Runtime": "nodejs18.x",
@@ -371,7 +371,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.signIn",
               "Runtime": "nodejs18.x",
@@ -400,64 +400,64 @@
               "SignInLogGroup"
             ]
           },
-          "TokenAuthrizerLambdaVersionqmACkK44NS25Xt89HmjU4Kt4x2P94r5QmL10mvGBA": {
+          "TokenAuthrizerLambdaVersionhfzSdpIRFekWdiSghsDdZKb7fMJcbaJ40KrNTNKRO8A": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "TokenAuthrizerLambdaFunction"
               },
-              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
             }
           },
-          "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38": {
+          "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetTasksLambdaFunction"
               },
-              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
             }
           },
-          "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ": {
+          "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateTaskLambdaFunction"
               },
-              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
             }
           },
-          "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ": {
+          "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UpdateTaskLambdaFunction"
               },
-              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
             }
           },
-          "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw": {
+          "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignUpLambdaFunction"
               },
-              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
             }
           },
-          "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg": {
+          "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignInLambdaFunction"
               },
-              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
             }
           },
           "HttpApi": {
@@ -571,6 +571,10 @@
                     }
                   ]
                 ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerJwtAuthorizer"
               }
             },
             "DependsOn": "HttpApiIntegrationGetTasks"
@@ -643,6 +647,10 @@
                     }
                   ]
                 ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerJwtAuthorizer"
               }
             },
             "DependsOn": "HttpApiIntegrationCreateTask"
@@ -715,6 +723,10 @@
                     }
                   ]
                 ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerJwtAuthorizer"
               }
             },
             "DependsOn": "HttpApiIntegrationUpdateTask"
@@ -954,7 +966,7 @@
           "TokenAuthrizerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "TokenAuthrizerLambdaVersionqmACkK44NS25Xt89HmjU4Kt4x2P94r5QmL10mvGBA"
+              "Ref": "TokenAuthrizerLambdaVersionhfzSdpIRFekWdiSghsDdZKb7fMJcbaJ40KrNTNKRO8A"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-TokenAuthrizerLambdaFunctionQualifiedArn"
@@ -963,7 +975,7 @@
           "GetTasksLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38"
+              "Ref": "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
@@ -972,7 +984,7 @@
           "CreateTaskLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ"
+              "Ref": "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
@@ -981,7 +993,7 @@
           "UpdateTaskLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ"
+              "Ref": "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
@@ -990,7 +1002,7 @@
           "SignUpLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw"
+              "Ref": "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
@@ -999,7 +1011,7 @@
           "SignInLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg"
+              "Ref": "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
@@ -1068,7 +1080,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "TokenAuthrizerLambdaVersionqmACkK44NS25Xt89HmjU4Kt4x2P94r5QmL10mvGBA"
+        "versionLogicalId": "TokenAuthrizerLambdaVersionhfzSdpIRFekWdiSghsDdZKb7fMJcbaJ40KrNTNKRO8A"
       },
       "getTasks": {
         "handler": "src/handlers/getTask.handler",
@@ -1076,7 +1088,8 @@
           {
             "httpApi": {
               "path": "/tasks",
-              "method": "get"
+              "method": "get",
+              "authorizer": "jwtAuthorizer"
             },
             "resolvedMethod": "GET",
             "resolvedPath": "/tasks"
@@ -1088,7 +1101,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38"
+        "versionLogicalId": "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU"
       },
       "createTask": {
         "handler": "src/handlers/createTask.handler",
@@ -1096,7 +1109,8 @@
           {
             "httpApi": {
               "path": "/tasks",
-              "method": "post"
+              "method": "post",
+              "authorizer": "jwtAuthorizer"
             },
             "resolvedMethod": "POST",
             "resolvedPath": "/tasks"
@@ -1108,7 +1122,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ"
+        "versionLogicalId": "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE"
       },
       "updateTask": {
         "handler": "src/handlers/updateTask.handler",
@@ -1116,7 +1130,8 @@
           {
             "httpApi": {
               "path": "/tasks/{id}",
-              "method": "put"
+              "method": "put",
+              "authorizer": "jwtAuthorizer"
             },
             "resolvedMethod": "PUT",
             "resolvedPath": "/tasks/{id}"
@@ -1128,7 +1143,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ"
+        "versionLogicalId": "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE"
       },
       "signUp": {
         "handler": "src/handlers/auth.signUp",
@@ -1148,7 +1163,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw"
+        "versionLogicalId": "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww"
       },
       "signIn": {
         "handler": "src/handlers/auth.signIn",
@@ -1168,7 +1183,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg"
+        "versionLogicalId": "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU"
       }
     },
     "resources": {
@@ -1283,7 +1298,7 @@
     "artifact": "/Applications/MAMP/htdocs/MasterG/node-express-mongodb/.serverless/master-g-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z",
+    "artifactDirectoryName": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z",
     "artifact": "master-g-api.zip"
   }
 }

@@ -1,6 +1,6 @@
-@host = https://eoylgi3jhd.execute-api.ap-south-1.amazonaws.com
+@host = https://bo2o9git21.execute-api.ap-south-1.amazonaws.com
 
-@jwt =eyJraWQiOiJTUk5vWDk3UXNYYnlUOWJHMWZxZ05iMUE1eXJ2ZTM3UGdSXC9IVGE0QWtaZz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2MWUzM2QyYS1iMGIxLTcwYzQtOTUxMC05OGFhNDA3ZjNiYWQiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGgtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aC0xX055QmdITzZFRiIsImNsaWVudF9pZCI6IjUxMDg4c24ybHF0b2VqamxxajJrcWoxczlrIiwib3JpZ2luX2p0aSI6ImVmMmUyNTM2LWQ0MWEtNDdkYi05YzE3LTdlOWM5OTBkMDk3ZSIsImV2ZW50X2lkIjoiMzMxY2U0ZWQtNDk1ZC00ZTI2LWJkMTAtOGIwYzAyMTM4ZGRhIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTc3MDAyNzcwOSwiZXhwIjoxNzcwMDMxMzA5LCJpYXQiOjE3NzAwMjc3MDksImp0aSI6ImY2ODU0NGU0LWFmZDgtNGZjZi05NDM4LWNkOGI5MmQxMDRlYSIsInVzZXJuYW1lIjoiNjFlMzNkMmEtYjBiMS03MGM0LTk1MTAtOThhYTQwN2YzYmFkIn0.ABFkU8VZtW-EER4lmkBh95Wz_ctWfdItF7CtCNR8VQsvys43Tf4D_FcP6kuidPrXrQL0wP3i1I2GPv0c2ywMv5iKPyEyK0ekDHOJnzDgNbnp-rSmIFaiGp3WtyPEPAfxjY8k6tuaBZKSuYXDXQ7aYj_yJOG6vvIAvWQ_tPV48_rQvKc0WfPW367yjktN47eAdHpe9zOXJFie1BZCIOGAc5ff3PWwl11-LtaQqMklnJ6gjArAHZAdM8O_C60Zc5KtYWX4uyjgzeL7jKgTmmx5EytKtFABsRozH9CObj2zYDomXzIKXfzfXLfEx-FWlwlkPzN47VGNwHxBlnl57b6f_Q
+@jwt =eyJraWQiOiJrTFwvdGQxcHVTZVZZYmxGWTV4V0ZvQXlhdGU3MmFuQzRvUkprc3ExbENXTT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MWMzOWQ4YS1iMDYxLTcwZTQtYjA4My1iYzhkZjVlZjlkODciLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGgtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aC0xX0dROFlYdU1UTCIsImNsaWVudF9pZCI6IjZzbjd1cmgwZ2w2aHM4MGcyMmM0cTRuZ3Q4Iiwib3JpZ2luX2p0aSI6IjIyZDkxYzRkLTgzYjgtNDg5Yy05MjFiLWFlYTE2MGYyZWRhNiIsImV2ZW50X2lkIjoiOWIyYzE4MGUtZGM3NS00Y2JkLThjNDktNGQyYWM1NGY5ZjZjIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTc3MDAzMDE4NSwiZXhwIjoxNzcwMDMzNzg1LCJpYXQiOjE3NzAwMzAxODUsImp0aSI6ImNjOTJlMGRhLTVhNmEtNDlkMS1hNTU3LTFmZDlmN2RhNWUyZCIsInVzZXJuYW1lIjoiODFjMzlkOGEtYjA2MS03MGU0LWIwODMtYmM4ZGY1ZWY5ZDg3In0.p6a8d2lq4fXlSGlrdtX8fZ5Yqs7iQt8LkDbmcY6mYyuuC2aW54Q-rlP6ISn-_fJ9G6UuSeikjVdZzRCiM9rq0or_fbNtEdHQdE3IpdOuM9iVYqY69IrHf_7nq5gJSF_BYgMwIAGyvU3eJvZEj95x-YElkU2Q9hIfVY1PZ9UgLw1-l476HYwRvSwxviznLhXFzGW91JaNYLAm9o4lBd96u-43mzWG0U1EX3b8jV6bw_CDL4pmsu_HaGpeZj4NjzK6wuo8D7O7Vgs2MfhD1HUgJGU0qIYgIs-nJqWC5WIOknpWGUvhv6ISqi8jwIhypWZon3F8mCO5LnMTP42w0PLPWA
 
 GET {{host}}/tasks
 Authorization: {{jwt}}
@@ -12,20 +12,20 @@ Content-Type: application/json
 Authorization: {{jwt}}
 
 {
-  "id": 3,
-  "title": "New Task",
-  "description": "This is a new task."
+  "id": 4,
+  "title": "New Task four",
+  "description": "This is a new task four."
 }
 
 
 ###
 
-PUT {{host}}/tasks/3
+PUT {{host}}/tasks/4
 Content-Type: application/json
 Authorization: {{jwt}}
 
 {
-  "title": "Updated Task",
-  "description": "This task has been updated."
+  "title": "Updated Task four",
+  "description": "This task has been updated four."
 }
 

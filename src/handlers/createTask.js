@@ -3,7 +3,7 @@ const DocumentClient = new AWS.DynamoDB.DocumentClient();
 
 const TASKS_TABLE_NAME = process.env.TASKS_TABLE;
 
-module.exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     const data = JSON.parse(event.body);
 
