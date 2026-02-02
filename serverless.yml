@@ -31,6 +31,12 @@ provider:
         identitySource: $request.header.authorization
         functionName: tokenAuthrizer
 
+        jwtCognitoAuthrizer:
+          type: jwt
+          identitySource: $request.header.Authorization
+          audience: ${self:custom.COGNITO_USER_POOL_CLIENT_ID}
+          issuer: https://cognito-idp.${self:provider.region}.amazonaws.com/${self:custom.cognitoUserPoolId}
+
 functions:
 
   tokenAuthrizer:
@@ -62,8 +68,15 @@ functions:
 
 resources:
   Resources:
-    ${file(resources/TasksTable.yml)}
+    TasksTable: ${file(resources/TasksTable.yml):TasksTable}
+    CognitoUserPool: ${file(resources/Cognito.yml):CognitoUserPool}
+    CognitoUserPoolClient: ${file(resources/Cognito.yml):CognitoUserPoolClient}
+    CognitoUserPoolDomain: ${file(resources/Cognito.yml):CognitoUserPoolDomain}
 
 plugins:
   - serverless-offline
   - serverless-plugin-include-dependencies
+
+custom:
+  COGNITO_USER_POOL_ID:!Ref CognitoUserPool
+  COGNITO_USER_POOL_CLIENT_ID:!Ref CognitoUserPoolClient
