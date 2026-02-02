@@ -1,16 +1,26 @@
 CognitoUserPool:
   Type: AWS::Cognito::UserPool
   Properties:
-    UserPoolName: TasksUserPool-${self:provider.stage}
+    UserPoolName: ${self:service}-user-pool-${self:provider.stage}
     UsernameAttributes:
       - email
+      - phone_number
+    AutoVerifiedAttributes:
+      - email
+    Policies:
+      PasswordPolicy:
+        MinimumLength: 8
+        RequireUppercase: true
+        RequireLowercase: true
+        RequireNumbers: true
+        RequireSymbols: false
 
 CognitoUserPoolClient:
   Type: AWS::Cognito::UserPoolClient
   Properties:
-    UserPoolId: !Ref: CognitoUserPool
-    ClientName: TasksUserPoolClient-${self:provider.stage}
-    AllowOAuthFlowsUserPoolClient: true
+    ClientName: ${self:service}-user-pool-client-${self:provider.stage}
+    UserPoolId: !Ref CognitoUserPool
+    AllowedOAuthFlowsUserPoolClient: true
     AllowedOAuthScopes:
       - email
       - openid
@@ -18,13 +28,17 @@ CognitoUserPoolClient:
     SupportedIdentityProviders:
       - COGNITO
     AllowedOAuthFlows:
+      - code
       - implicit
-      CallbackURLs:
-      - http://localhost:3000
-      DefaultRedirectURI: http://localhost:3000
+    ExplicitAuthFlows:
+      - ADMIN_NO_SRP_AUTH
+      - USER_PASSWORD_AUTH
+    CallbackURLs:
+      - https://localhost:3000
+    DefaultRedirectURI: https://localhost:3000
 
 CognitoUserPoolDomain:
   Type: AWS::Cognito::UserPoolDomain
   Properties:
-    Domain: tasksauthidp-${self:provider.stage}
-    UserPoolId: !Ref: CognitoUserPool
+    Domain: ${self:service}-auth-domain-${self:provider.stage}
+    UserPoolId: !Ref CognitoUserPool

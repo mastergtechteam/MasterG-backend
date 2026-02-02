@@ -1,25 +1,30 @@
-const AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
-const DocumentClient = new AWS.DynamoDB.DocumentClient();
-const TASKS_TABLE_NAME = process.env.TASKS_TABLE;
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
+export const handler = async (event) => {
+  console.log('Received event:', JSON.stringify(event, null, 2)); // Log the event for debugging
 
-module.exports.handler = async () => {
   try {
-    const data = await DocumentClient.scan({
-      TableName: TASKS_TABLE_NAME,
-    }).promise();
+    const params = {
+      TableName: process.env.TASKS_TABLE, // Ensure this environment variable is set
+    };
+
+    console.log('DynamoDB scan params:', params); // Log the DynamoDB parameters
+
+    const result = await dynamoDb.scan(params).promise();
+
+    console.log('DynamoDB scan result:', result); // Log the result from DynamoDB
 
     return {
       statusCode: 200,
-      body: JSON.stringify(data.Items),
+      body: JSON.stringify(result.Items),
     };
-
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching tasks:', error); // Log the error
     return {
       statusCode: 500,
-      body: JSON.stringify(error),
+      body: JSON.stringify({ error: 'Could not fetch tasks' }),
     };
   }
 };

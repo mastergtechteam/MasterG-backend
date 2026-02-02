@@ -14,8 +14,13 @@
         "memorySize": 128,
         "logRetentionInDays": 1,
         "environment": {
-          "TASKS_TABLE": "master-g-api-tasks-dev",
-          "AWS_NODEJS_CONNECTION_REUSE_ENABLED": 1
+          "TASKS_TABLE": {
+            "Ref": "TasksTable"
+          },
+          "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+          "COGNITO_CLIENT_ID": {
+            "Ref": "CognitoUserPoolClient"
+          }
         },
         "iam": {
           "role": {
@@ -27,16 +32,994 @@
                   "dynamodb:PutItem",
                   "dynamodb:UpdateItem"
                 ],
-                "Resource": "*"
+                "Resource": [
+                  {
+                    "Fn::GetAtt": [
+                      "TasksTable",
+                      "Arn"
+                    ]
+                  }
+                ]
               }
             ]
           }
         },
         "httpApi": {
           "authorizers": {
-            "tokenAuth": "<REDACTED>"
+            "jwtAuthorizer": {
+              "identitySource": "$request.header.Authorization",
+              "issuerUrl": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://cognito-idp.",
+                    "ap-south-1",
+                    ".amazonaws.com/",
+                    {
+                      "Ref": "CognitoUserPool"
+                    }
+                  ]
+                ]
+              },
+              "audience": [
+                {
+                  "Ref": "CognitoUserPoolClient"
+                }
+              ],
+              "unauthorizedCacheTimeInSeconds": 300
+            }
           }
-        }
+        },
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "TokenAuthrizerLogGroup": "<REDACTED>",
+            "GetTasksLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-getTasks",
+                "RetentionInDays": 1
+              }
+            },
+            "CreateTaskLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-createTask",
+                "RetentionInDays": 1
+              }
+            },
+            "UpdateTaskLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-updateTask",
+                "RetentionInDays": 1
+              }
+            },
+            "SignUpLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-signUp",
+                "RetentionInDays": 1
+              }
+            },
+            "SignInLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-signIn",
+                "RetentionInDays": 1
+              }
+            },
+            "IamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "master-g-api",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:TagResource"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev*:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "dynamodb:Scan",
+                            "dynamodb:PutItem",
+                            "dynamodb:UpdateItem"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::GetAtt": [
+                                "TasksTable",
+                                "Arn"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                }
+              }
+            },
+            "TokenAuthrizerLambdaFunction": "<REDACTED>",
+            "GetTasksLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/getTask.handler",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-getTasks",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "GetTasksLogGroup"
+              ]
+            },
+            "CreateTaskLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/createTask.handler",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-createTask",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "CreateTaskLogGroup"
+              ]
+            },
+            "UpdateTaskLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/updateTask.handler",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-updateTask",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "UpdateTaskLogGroup"
+              ]
+            },
+            "SignUpLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/auth.signUp",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-signUp",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "SignUpLogGroup"
+              ]
+            },
+            "SignInLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/auth.signIn",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-signIn",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "SignInLogGroup"
+              ]
+            },
+            "TokenAuthrizerLambdaVersionqmACkK44NS25Xt89HmjU4Kt4x2P94r5QmL10mvGBA": "<REDACTED>",
+            "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "GetTasksLambdaFunction"
+                },
+                "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              }
+            },
+            "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "CreateTaskLambdaFunction"
+                },
+                "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              }
+            },
+            "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "UpdateTaskLambdaFunction"
+                },
+                "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              }
+            },
+            "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "SignUpLambdaFunction"
+                },
+                "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              }
+            },
+            "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "SignInLambdaFunction"
+                },
+                "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+              }
+            },
+            "HttpApi": {
+              "Type": "AWS::ApiGatewayV2::Api",
+              "Properties": {
+                "Name": "dev-master-g-api",
+                "ProtocolType": "HTTP"
+              }
+            },
+            "HttpApiStage": {
+              "Type": "AWS::ApiGatewayV2::Stage",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "StageName": "$default",
+                "AutoDeploy": true,
+                "DefaultRouteSettings": {
+                  "DetailedMetricsEnabled": false
+                }
+              }
+            },
+            "HttpApiAuthorizerJwtAuthorizer": {
+              "Type": "AWS::ApiGatewayV2::Authorizer",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "Name": "jwtAuthorizer",
+                "IdentitySource": [
+                  "$request.header.Authorization"
+                ],
+                "AuthorizerType": "JWT",
+                "JwtConfiguration": {
+                  "Audience": [
+                    {
+                      "Ref": "CognitoUserPoolClient"
+                    }
+                  ],
+                  "Issuer": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "https://cognito-idp.",
+                        "ap-south-1",
+                        ".amazonaws.com/",
+                        {
+                          "Ref": "CognitoUserPool"
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            },
+            "GetTasksLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "GetTasksLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationGetTasks": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "GetTasksLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRouteGetTasks": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "GET /tasks",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationGetTasks"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationGetTasks"
+            },
+            "CreateTaskLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "CreateTaskLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationCreateTask": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "CreateTaskLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRoutePostTasks": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "POST /tasks",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationCreateTask"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationCreateTask"
+            },
+            "UpdateTaskLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "UpdateTaskLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationUpdateTask": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "UpdateTaskLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRoutePutTasksIdVar": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "PUT /tasks/{id}",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationUpdateTask"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationUpdateTask"
+            },
+            "SignUpLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "SignUpLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationSignUp": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "SignUpLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRoutePostAuthSignup": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "POST /auth/signup",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationSignUp"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationSignUp"
+            },
+            "SignInLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "SignInLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationSignIn": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "SignInLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRoutePostAuthLogin": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "POST /auth/login",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationSignIn"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationSignIn"
+            },
+            "TasksTable": {
+              "Type": "AWS::DynamoDB::Table",
+              "Properties": {
+                "TableName": "tasks-dev",
+                "BillingMode": "PAY_PER_REQUEST",
+                "AttributeDefinitions": [
+                  {
+                    "AttributeName": "id",
+                    "AttributeType": "N"
+                  }
+                ],
+                "KeySchema": [
+                  {
+                    "AttributeName": "id",
+                    "KeyType": "HASH"
+                  }
+                ]
+              }
+            },
+            "CognitoUserPool": {
+              "Type": "AWS::Cognito::UserPool",
+              "Properties": {
+                "UserPoolName": "master-g-api-user-pool-dev",
+                "UsernameAttributes": [
+                  "email",
+                  "phone_number"
+                ],
+                "AutoVerifiedAttributes": [
+                  "email"
+                ],
+                "Policies": {
+                  "PasswordPolicy": "<REDACTED>"
+                }
+              }
+            },
+            "CognitoUserPoolClient": {
+              "Type": "AWS::Cognito::UserPoolClient",
+              "Properties": {
+                "ClientName": "master-g-api-user-pool-client-dev",
+                "UserPoolId": {
+                  "Ref": "CognitoUserPool"
+                },
+                "AllowedOAuthFlowsUserPoolClient": true,
+                "AllowedOAuthScopes": [
+                  "email",
+                  "openid",
+                  "profile"
+                ],
+                "SupportedIdentityProviders": [
+                  "COGNITO"
+                ],
+                "AllowedOAuthFlows": [
+                  "code",
+                  "implicit"
+                ],
+                "ExplicitAuthFlows": [
+                  "ADMIN_NO_SRP_AUTH",
+                  "USER_PASSWORD_AUTH"
+                ],
+                "CallbackURLs": [
+                  "https://localhost:3000"
+                ],
+                "DefaultRedirectURI": "https://localhost:3000"
+              }
+            },
+            "CognitoUserPoolDomain": {
+              "Type": "AWS::Cognito::UserPoolDomain",
+              "Properties": {
+                "Domain": "master-g-api-auth-domain-dev",
+                "UserPoolId": {
+                  "Ref": "CognitoUserPool"
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "Export": {
+                "Name": "sls-master-g-api-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "TokenAuthrizerLambdaFunctionQualifiedArn": "<REDACTED>",
+            "GetTasksLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
+              }
+            },
+            "CreateTaskLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
+              }
+            },
+            "UpdateTaskLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
+              }
+            },
+            "SignUpLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
+              }
+            },
+            "SignInLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
+              }
+            },
+            "HttpApiId": {
+              "Description": "Id of the HTTP API",
+              "Value": {
+                "Ref": "HttpApi"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-HttpApiId"
+              }
+            },
+            "HttpApiUrl": {
+              "Description": "URL of the HTTP API",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    }
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-HttpApiUrl"
+              }
+            }
+          }
+        },
+        "vpc": {}
       },
       "functions": {
         "tokenAuthrizer": "<REDACTED>",
@@ -46,11 +1029,19 @@
             {
               "httpApi": {
                 "path": "/tasks",
-                "method": "get",
-                "authorizer": "tokenAuth"
-              }
+                "method": "get"
+              },
+              "resolvedMethod": "GET",
+              "resolvedPath": "/tasks"
             }
-          ]
+          ],
+          "name": "master-g-api-dev-getTasks",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38"
         },
         "createTask": {
           "handler": "src/handlers/createTask.handler",
@@ -58,11 +1049,19 @@
             {
               "httpApi": {
                 "path": "/tasks",
-                "method": "post",
-                "authorizer": "tokenAuth"
-              }
+                "method": "post"
+              },
+              "resolvedMethod": "POST",
+              "resolvedPath": "/tasks"
             }
-          ]
+          ],
+          "name": "master-g-api-dev-createTask",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ"
         },
         "updateTask": {
           "handler": "src/handlers/updateTask.handler",
@@ -70,26 +1069,154 @@
             {
               "httpApi": {
                 "path": "/tasks/{id}",
-                "method": "put",
-                "authorizer": "tokenAuth"
-              }
+                "method": "put"
+              },
+              "resolvedMethod": "PUT",
+              "resolvedPath": "/tasks/{id}"
             }
-          ]
+          ],
+          "name": "master-g-api-dev-updateTask",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ"
+        },
+        "signUp": {
+          "handler": "src/handlers/auth.signUp",
+          "events": [
+            {
+              "httpApi": {
+                "path": "/auth/signup",
+                "method": "post"
+              },
+              "resolvedMethod": "POST",
+              "resolvedPath": "/auth/signup"
+            }
+          ],
+          "name": "master-g-api-dev-signUp",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw"
+        },
+        "signIn": {
+          "handler": "src/handlers/auth.signIn",
+          "events": [
+            {
+              "httpApi": {
+                "path": "/auth/login",
+                "method": "post"
+              },
+              "resolvedMethod": "POST",
+              "resolvedPath": "/auth/login"
+            }
+          ],
+          "name": "master-g-api-dev-signIn",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg"
         }
       },
       "resources": {
         "Resources": {
-          "TasksTable": "${file(resources/TasksTable.yml):TasksTable}",
-          "CognitoUserPool": "${file(resources/Cognito.yml):CognitoUserPool}",
-          "CognitoUserPoolClient": "${file(resources/Cognito.yml):CognitoUserPoolClient}",
-          "CognitoUserPoolDomain": "${file(resources/Cognito.yml):CognitoUserPoolDomain}"
-        }
+          "TasksTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "tasks-dev",
+              "BillingMode": "PAY_PER_REQUEST",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "id",
+                  "AttributeType": "N"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "id",
+                  "KeyType": "HASH"
+                }
+              ]
+            }
+          },
+          "CognitoUserPool": {
+            "Type": "AWS::Cognito::UserPool",
+            "Properties": {
+              "UserPoolName": "master-g-api-user-pool-dev",
+              "UsernameAttributes": [
+                "email",
+                "phone_number"
+              ],
+              "AutoVerifiedAttributes": [
+                "email"
+              ],
+              "Policies": {
+                "PasswordPolicy": "<REDACTED>"
+              }
+            }
+          },
+          "CognitoUserPoolClient": {
+            "Type": "AWS::Cognito::UserPoolClient",
+            "Properties": {
+              "ClientName": "master-g-api-user-pool-client-dev",
+              "UserPoolId": {
+                "Ref": "CognitoUserPool"
+              },
+              "AllowedOAuthFlowsUserPoolClient": true,
+              "AllowedOAuthScopes": [
+                "email",
+                "openid",
+                "profile"
+              ],
+              "SupportedIdentityProviders": [
+                "COGNITO"
+              ],
+              "AllowedOAuthFlows": [
+                "code",
+                "implicit"
+              ],
+              "ExplicitAuthFlows": [
+                "ADMIN_NO_SRP_AUTH",
+                "USER_PASSWORD_AUTH"
+              ],
+              "CallbackURLs": [
+                "https://localhost:3000"
+              ],
+              "DefaultRedirectURI": "https://localhost:3000"
+            }
+          },
+          "CognitoUserPoolDomain": {
+            "Type": "AWS::Cognito::UserPoolDomain",
+            "Properties": {
+              "Domain": "master-g-api-auth-domain-dev",
+              "UserPoolId": {
+                "Ref": "CognitoUserPool"
+              }
+            }
+          }
+        },
+        "Outputs": {}
       },
       "plugins": [
         "serverless-offline",
         "serverless-plugin-include-dependencies"
       ],
-      "custom": "COGNITO_USER_POOL_ID:!Ref CognitoUserPool COGNITO_USER_POOL_CLIENT_ID:!Ref CognitoUserPoolClient"
+      "custom": {
+        "cognito": {
+          "userPoolId": {
+            "Ref": "CognitoUserPool"
+          },
+          "userPoolClientId": {
+            "Ref": "CognitoUserPoolClient"
+          }
+        }
+      }
     },
     "provider": {
       "name": "aws",
@@ -99,8 +1226,13 @@
       "memorySize": 128,
       "logRetentionInDays": 1,
       "environment": {
-        "TASKS_TABLE": "master-g-api-tasks-dev",
-        "AWS_NODEJS_CONNECTION_REUSE_ENABLED": 1
+        "TASKS_TABLE": {
+          "Ref": "TasksTable"
+        },
+        "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+        "COGNITO_CLIENT_ID": {
+          "Ref": "CognitoUserPoolClient"
+        }
       },
       "iam": {
         "role": {
@@ -112,16 +1244,994 @@
                 "dynamodb:PutItem",
                 "dynamodb:UpdateItem"
               ],
-              "Resource": "*"
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "TasksTable",
+                    "Arn"
+                  ]
+                }
+              ]
             }
           ]
         }
       },
       "httpApi": {
         "authorizers": {
-          "tokenAuth": "<REDACTED>"
+          "jwtAuthorizer": {
+            "identitySource": "$request.header.Authorization",
+            "issuerUrl": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://cognito-idp.",
+                  "ap-south-1",
+                  ".amazonaws.com/",
+                  {
+                    "Ref": "CognitoUserPool"
+                  }
+                ]
+              ]
+            },
+            "audience": [
+              {
+                "Ref": "CognitoUserPoolClient"
+              }
+            ],
+            "unauthorizedCacheTimeInSeconds": 300
+          }
         }
-      }
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "TokenAuthrizerLogGroup": "<REDACTED>",
+          "GetTasksLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-getTasks",
+              "RetentionInDays": 1
+            }
+          },
+          "CreateTaskLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-createTask",
+              "RetentionInDays": 1
+            }
+          },
+          "UpdateTaskLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-updateTask",
+              "RetentionInDays": 1
+            }
+          },
+          "SignUpLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-signUp",
+              "RetentionInDays": 1
+            }
+          },
+          "SignInLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-signIn",
+              "RetentionInDays": 1
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "master-g-api",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:TagResource"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "dynamodb:Scan",
+                          "dynamodb:PutItem",
+                          "dynamodb:UpdateItem"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::GetAtt": [
+                              "TasksTable",
+                              "Arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "master-g-api",
+                    "dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "TokenAuthrizerLambdaFunction": "<REDACTED>",
+          "GetTasksLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/getTask.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-getTasks",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetTasksLogGroup"
+            ]
+          },
+          "CreateTaskLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/createTask.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-createTask",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "CreateTaskLogGroup"
+            ]
+          },
+          "UpdateTaskLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/updateTask.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-updateTask",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "UpdateTaskLogGroup"
+            ]
+          },
+          "SignUpLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/auth.signUp",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-signUp",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "SignUpLogGroup"
+            ]
+          },
+          "SignInLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/auth.signIn",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-signIn",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "SignInLogGroup"
+            ]
+          },
+          "TokenAuthrizerLambdaVersionqmACkK44NS25Xt89HmjU4Kt4x2P94r5QmL10mvGBA": "<REDACTED>",
+          "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetTasksLambdaFunction"
+              },
+              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+            }
+          },
+          "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateTaskLambdaFunction"
+              },
+              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+            }
+          },
+          "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "UpdateTaskLambdaFunction"
+              },
+              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+            }
+          },
+          "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "SignUpLambdaFunction"
+              },
+              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+            }
+          },
+          "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "SignInLambdaFunction"
+              },
+              "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+            }
+          },
+          "HttpApi": {
+            "Type": "AWS::ApiGatewayV2::Api",
+            "Properties": {
+              "Name": "dev-master-g-api",
+              "ProtocolType": "HTTP"
+            }
+          },
+          "HttpApiStage": {
+            "Type": "AWS::ApiGatewayV2::Stage",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "StageName": "$default",
+              "AutoDeploy": true,
+              "DefaultRouteSettings": {
+                "DetailedMetricsEnabled": false
+              }
+            }
+          },
+          "HttpApiAuthorizerJwtAuthorizer": {
+            "Type": "AWS::ApiGatewayV2::Authorizer",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "Name": "jwtAuthorizer",
+              "IdentitySource": [
+                "$request.header.Authorization"
+              ],
+              "AuthorizerType": "JWT",
+              "JwtConfiguration": {
+                "Audience": [
+                  {
+                    "Ref": "CognitoUserPoolClient"
+                  }
+                ],
+                "Issuer": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "https://cognito-idp.",
+                      "ap-south-1",
+                      ".amazonaws.com/",
+                      {
+                        "Ref": "CognitoUserPool"
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "GetTasksLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetTasksLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationGetTasks": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "GetTasksLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteGetTasks": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "GET /tasks",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationGetTasks"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationGetTasks"
+          },
+          "CreateTaskLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateTaskLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationCreateTask": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "CreateTaskLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePostTasks": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /tasks",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationCreateTask"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationCreateTask"
+          },
+          "UpdateTaskLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "UpdateTaskLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationUpdateTask": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "UpdateTaskLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePutTasksIdVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "PUT /tasks/{id}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationUpdateTask"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationUpdateTask"
+          },
+          "SignUpLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "SignUpLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationSignUp": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "SignUpLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePostAuthSignup": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /auth/signup",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationSignUp"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationSignUp"
+          },
+          "SignInLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "SignInLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationSignIn": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "SignInLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePostAuthLogin": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /auth/login",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationSignIn"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationSignIn"
+          },
+          "TasksTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "tasks-dev",
+              "BillingMode": "PAY_PER_REQUEST",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "id",
+                  "AttributeType": "N"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "id",
+                  "KeyType": "HASH"
+                }
+              ]
+            }
+          },
+          "CognitoUserPool": {
+            "Type": "AWS::Cognito::UserPool",
+            "Properties": {
+              "UserPoolName": "master-g-api-user-pool-dev",
+              "UsernameAttributes": [
+                "email",
+                "phone_number"
+              ],
+              "AutoVerifiedAttributes": [
+                "email"
+              ],
+              "Policies": {
+                "PasswordPolicy": "<REDACTED>"
+              }
+            }
+          },
+          "CognitoUserPoolClient": {
+            "Type": "AWS::Cognito::UserPoolClient",
+            "Properties": {
+              "ClientName": "master-g-api-user-pool-client-dev",
+              "UserPoolId": {
+                "Ref": "CognitoUserPool"
+              },
+              "AllowedOAuthFlowsUserPoolClient": true,
+              "AllowedOAuthScopes": [
+                "email",
+                "openid",
+                "profile"
+              ],
+              "SupportedIdentityProviders": [
+                "COGNITO"
+              ],
+              "AllowedOAuthFlows": [
+                "code",
+                "implicit"
+              ],
+              "ExplicitAuthFlows": [
+                "ADMIN_NO_SRP_AUTH",
+                "USER_PASSWORD_AUTH"
+              ],
+              "CallbackURLs": [
+                "https://localhost:3000"
+              ],
+              "DefaultRedirectURI": "https://localhost:3000"
+            }
+          },
+          "CognitoUserPoolDomain": {
+            "Type": "AWS::Cognito::UserPoolDomain",
+            "Properties": {
+              "Domain": "master-g-api-auth-domain-dev",
+              "UserPoolId": {
+                "Ref": "CognitoUserPool"
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+            "Export": {
+              "Name": "sls-master-g-api-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "TokenAuthrizerLambdaFunctionQualifiedArn": "<REDACTED>",
+          "GetTasksLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
+            }
+          },
+          "CreateTaskLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
+            }
+          },
+          "UpdateTaskLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
+            }
+          },
+          "SignUpLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
+            }
+          },
+          "SignInLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
+            }
+          },
+          "HttpApiId": {
+            "Description": "Id of the HTTP API",
+            "Value": {
+              "Ref": "HttpApi"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-HttpApiId"
+            }
+          },
+          "HttpApiUrl": {
+            "Description": "URL of the HTTP API",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  }
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-HttpApiUrl"
+            }
+          }
+        }
+      },
+      "vpc": {}
     },
     "dashboard": {
       "isEnabledForService": false,
@@ -132,54 +2242,61 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
-    "error": {
-      "message": "Cannot resolve '${self:custom.COGNITO_USER_POOL_CLIENT_ID}' variable at 'provider.httpApi.authorizers.tokenAuth.jwtCognitoAuthrizer.audience'. No value is available for this variable, and no default value was provided. Please check your variable definitions or provide a default value.",
-      "stack": "Error: Cannot resolve '${self:custom.COGNITO_USER_POOL_CLIENT_ID}' variable at 'provider.httpApi.authorizers.tokenAuth.jwtCognitoAuthrizer.audience'. No value is available for this variable, and no default value was provided. Please check your variable definitions or provide a default value.\n    at _ResolverManager.resolve (file:///Users/neerajtetaree/.serverless/releases/4.31.2/package/dist/sf-core.js:925:32358)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async #handlePlaceholderNode (file:///Users/neerajtetaree/.serverless/releases/4.31.2/package/dist/sf-core.js:925:30536)\n    at async file:///Users/neerajtetaree/.serverless/releases/4.31.2/package/dist/sf-core.js:925:28380\n    at async processNodeAndHandleCompletion (file:///Users/neerajtetaree/.serverless/releases/4.31.2/package/dist/sf-core.js:925:16765)",
-      "code": "MISSING_VARIABLE_RESULT"
-    },
-    "serviceRawFile": "service: master-g-api\n\nframeworkVersion: '4'\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  stage: ${opt:stage, 'dev'}\n  region: ${opt:region, 'ap-south-1'}\n  memorySize: 128\n  logRetentionInDays: 1\n\n  environment:\n    TASKS_TABLE: master-g-api-tasks-${self:provider.stage}\n    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1\n\n  iam:\n    role:\n      statements:\n        - Effect: Allow\n          Action:\n            - dynamodb:Scan\n            - dynamodb:PutItem\n            - dynamodb:UpdateItem\n          Resource: \"*\"\n\n  httpApi:\n    authorizers:\n      tokenAuth:\n        type: request\n        identitySource: $request.header.authorization\n        functionName: tokenAuthrizer\n\n        jwtCognitoAuthrizer:\n          type: jwt\n          identitySource: $request.header.Authorization\n          audience: ${self:custom.COGNITO_USER_POOL_CLIENT_ID}\n          issuer: https://cognito-idp.${self:provider.region}.amazonaws.com/${self:custom.cognitoUserPoolId}\n\nfunctions:\n\n  tokenAuthrizer:\n    handler: src/authorizers/tokenAuthorizer.handler\n\n  getTasks:\n    handler: src/handlers/getTask.handler\n    events:\n      - httpApi:\n          path: /tasks\n          method: get\n          authorizer: tokenAuth\n\n  createTask:\n    handler: src/handlers/createTask.handler\n    events:\n      - httpApi:\n          path: /tasks\n          method: post\n          authorizer: tokenAuth\n\n  updateTask:\n    handler: src/handlers/updateTask.handler\n    events:\n      - httpApi:\n          path: /tasks/{id}\n          method: put\n          authorizer: tokenAuth\n\nresources:\n  Resources:\n    TasksTable: ${file(resources/TasksTable.yml):TasksTable}\n    CognitoUserPool: ${file(resources/Cognito.yml):CognitoUserPool}\n    CognitoUserPoolClient: ${file(resources/Cognito.yml):CognitoUserPoolClient}\n    CognitoUserPoolDomain: ${file(resources/Cognito.yml):CognitoUserPoolDomain}\n\nplugins:\n  - serverless-offline\n  - serverless-plugin-include-dependencies\n\ncustom:\n  COGNITO_USER_POOL_ID:!Ref CognitoUserPool\n  COGNITO_USER_POOL_CLIENT_ID:!Ref CognitoUserPoolClient",
+    "serviceRawFile": "service: master-g-api\n\nframeworkVersion: '4'\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  stage: ${opt:stage, 'dev'}\n  region: ${opt:region, 'ap-south-1'}\n  memorySize: 128\n  logRetentionInDays: 1\n\n  environment:\n    TASKS_TABLE: !Ref TasksTable\n    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1\n    COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient\n\n  iam:\n    role:\n      statements:\n        - Effect: Allow\n          Action:\n            - dynamodb:Scan\n            - dynamodb:PutItem\n            - dynamodb:UpdateItem\n          Resource: \n            - !GetAtt TasksTable.Arn\n\n  httpApi:\n    authorizers:\n      jwtAuthorizer:\n        identitySource: $request.header.Authorization\n        issuerUrl: !Join ['', [\n          'https://cognito-idp.',\n          '${self:provider.region}',\n          '.amazonaws.com/',\n          '${self:custom.cognito.userPoolId}'\n        ]]\n        audience:\n          - ${self:custom.cognito.userPoolClientId}\n        unauthorizedCacheTimeInSeconds: 300\n\nfunctions:\n\n  tokenAuthrizer:\n    handler: src/authorizers/tokenAuthorizer.handler\n\n  getTasks:\n    handler: src/handlers/getTask.handler\n    events:\n      - httpApi:\n          path: /tasks\n          method: get\n\n  createTask:\n    handler: src/handlers/createTask.handler\n    events:\n      - httpApi:\n          path: /tasks\n          method: post\n\n  updateTask:\n    handler: src/handlers/updateTask.handler\n    events:\n      - httpApi:\n          path: /tasks/{id}\n          method: put\n\n  signUp:\n    handler: src/handlers/auth.signUp\n    events:\n      - httpApi:\n          path: /auth/signup\n          method: post\n\n  signIn:\n    handler: src/handlers/auth.signIn\n    events:\n      - httpApi:\n          path: /auth/login\n          method: post\n\nresources:\n  Resources:\n    TasksTable: ${file(resources/TasksTable.yml):TasksTable}\n    CognitoUserPool: ${file(resources/Cognito.yml):CognitoUserPool}\n    CognitoUserPoolClient: ${file(resources/Cognito.yml):CognitoUserPoolClient}\n    CognitoUserPoolDomain: ${file(resources/Cognito.yml):CognitoUserPoolDomain}\n\nplugins:\n  - serverless-offline\n  - serverless-plugin-include-dependencies\n\ncustom:\n  cognito:\n    userPoolId: !Ref CognitoUserPool\n    userPoolClientId: !Ref CognitoUserPoolClient",
     "command": [
       "deploy"
     ],
-    "options": {
-      "verbose": true
-    },
+    "options": {},
     "orgId": "e6766511-ceb9-4661-88a7-1450c867a46b",
     "orgName": "neerajtetaree",
     "userId": "6q2vCZ6ksDXk1dXVQd",
     "userName": "neerajtetaree",
-    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-south-1:724390852787:stack/master-g-api-dev/d0aa0400-fc7d-11f0-9968-068dd5a3b74f",
-    "serviceProviderAwsCfStackCreated": "2026-01-28T19:16:15.713Z",
-    "serviceProviderAwsCfStackUpdated": "2026-01-31T11:33:09.582Z",
-    "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
+    "serviceProviderAwsAccountId": "724390852787",
+    "serviceProviderAwsCfStackName": "master-g-api-dev",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-south-1:724390852787:stack/master-g-api-dev/926fd020-0024-11f1-b6c7-068dd5a3b74f",
+    "serviceProviderAwsCfStackCreated": "2026-02-02T10:47:30.170Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
+        "OutputKey": "SignInLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-signIn:17",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
+      },
+      {
         "OutputKey": "GetTasksLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-getTasks:20",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-getTasks:38",
         "Description": "Current Lambda function version",
         "ExportName": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "UpdateTaskLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-updateTask:20",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-updateTask:38",
         "Description": "Current Lambda function version",
         "ExportName": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "CreateTaskLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-createTask:20",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-createTask:38",
         "Description": "Current Lambda function version",
         "ExportName": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "TokenAuthrizerLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-tokenAuthrizer:11",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-tokenAuthrizer:29",
         "Description": "Current Lambda function version",
         "ExportName": "sls-master-g-api-dev-TokenAuthrizerLambdaFunctionQualifiedArn"
       },
       {
+        "OutputKey": "SignUpLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-signUp:17",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
+      },
+      {
         "OutputKey": "HttpApiId",
-        "OutputValue": "eoylgi3jhd",
+        "OutputValue": "bo2o9git21",
         "Description": "Id of the HTTP API",
         "ExportName": "sls-master-g-api-dev-HttpApiId"
       },
@@ -190,10 +2307,958 @@
       },
       {
         "OutputKey": "HttpApiUrl",
-        "OutputValue": "https://eoylgi3jhd.execute-api.ap-south-1.amazonaws.com",
+        "OutputValue": "https://bo2o9git21.execute-api.ap-south-1.amazonaws.com",
         "Description": "URL of the HTTP API",
         "ExportName": "sls-master-g-api-dev-HttpApiUrl"
       }
-    ]
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "TokenAuthrizerLogGroup": "<REDACTED>",
+        "GetTasksLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-getTasks",
+            "RetentionInDays": 1
+          }
+        },
+        "CreateTaskLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-createTask",
+            "RetentionInDays": 1
+          }
+        },
+        "UpdateTaskLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-updateTask",
+            "RetentionInDays": 1
+          }
+        },
+        "SignUpLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-signUp",
+            "RetentionInDays": 1
+          }
+        },
+        "SignInLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-signIn",
+            "RetentionInDays": 1
+          }
+        },
+        "IamRoleLambdaExecution": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "lambda"
+                    ]
+                  ]
+                },
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
+                        "logs:TagResource"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev*:*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "dynamodb:Scan",
+                        "dynamodb:PutItem",
+                        "dynamodb:UpdateItem"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::GetAtt": [
+                            "TasksTable",
+                            "Arn"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "Path": "/",
+            "RoleName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  "lambdaRole"
+                ]
+              ]
+            }
+          }
+        },
+        "TokenAuthrizerLambdaFunction": "<REDACTED>",
+        "GetTasksLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/getTask.handler",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-getTasks",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "GetTasksLogGroup"
+          ]
+        },
+        "CreateTaskLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/createTask.handler",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-createTask",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "CreateTaskLogGroup"
+          ]
+        },
+        "UpdateTaskLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/updateTask.handler",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-updateTask",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "UpdateTaskLogGroup"
+          ]
+        },
+        "SignUpLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/auth.signUp",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-signUp",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "SignUpLogGroup"
+          ]
+        },
+        "SignInLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770029245202-2026-02-02T10:47:25.202Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/auth.signIn",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-signIn",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "SignInLogGroup"
+          ]
+        },
+        "TokenAuthrizerLambdaVersionqmACkK44NS25Xt89HmjU4Kt4x2P94r5QmL10mvGBA": "<REDACTED>",
+        "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "GetTasksLambdaFunction"
+            },
+            "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+          }
+        },
+        "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "CreateTaskLambdaFunction"
+            },
+            "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+          }
+        },
+        "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "UpdateTaskLambdaFunction"
+            },
+            "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+          }
+        },
+        "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "SignUpLambdaFunction"
+            },
+            "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+          }
+        },
+        "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "SignInLambdaFunction"
+            },
+            "CodeSha256": "nD22yERocVPz/qTJPsyLTQiM0CZdbaEEkKBakItP9T0="
+          }
+        },
+        "HttpApi": {
+          "Type": "AWS::ApiGatewayV2::Api",
+          "Properties": {
+            "Name": "dev-master-g-api",
+            "ProtocolType": "HTTP"
+          }
+        },
+        "HttpApiStage": {
+          "Type": "AWS::ApiGatewayV2::Stage",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "StageName": "$default",
+            "AutoDeploy": true,
+            "DefaultRouteSettings": {
+              "DetailedMetricsEnabled": false
+            }
+          }
+        },
+        "HttpApiAuthorizerJwtAuthorizer": {
+          "Type": "AWS::ApiGatewayV2::Authorizer",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "Name": "jwtAuthorizer",
+            "IdentitySource": [
+              "$request.header.Authorization"
+            ],
+            "AuthorizerType": "JWT",
+            "JwtConfiguration": {
+              "Audience": [
+                {
+                  "Ref": "CognitoUserPoolClient"
+                }
+              ],
+              "Issuer": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://cognito-idp.",
+                    "ap-south-1",
+                    ".amazonaws.com/",
+                    {
+                      "Ref": "CognitoUserPool"
+                    }
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "GetTasksLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "GetTasksLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationGetTasks": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "GetTasksLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRouteGetTasks": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "GET /tasks",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationGetTasks"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationGetTasks"
+        },
+        "CreateTaskLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "CreateTaskLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationCreateTask": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "CreateTaskLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRoutePostTasks": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "POST /tasks",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationCreateTask"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationCreateTask"
+        },
+        "UpdateTaskLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "UpdateTaskLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationUpdateTask": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "UpdateTaskLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRoutePutTasksIdVar": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "PUT /tasks/{id}",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationUpdateTask"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationUpdateTask"
+        },
+        "SignUpLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "SignUpLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationSignUp": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "SignUpLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRoutePostAuthSignup": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "POST /auth/signup",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationSignUp"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationSignUp"
+        },
+        "SignInLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "SignInLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationSignIn": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "SignInLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRoutePostAuthLogin": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "POST /auth/login",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationSignIn"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationSignIn"
+        },
+        "TasksTable": {
+          "Type": "AWS::DynamoDB::Table",
+          "Properties": {
+            "TableName": "tasks-dev",
+            "BillingMode": "PAY_PER_REQUEST",
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "id",
+                "AttributeType": "N"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "id",
+                "KeyType": "HASH"
+              }
+            ]
+          }
+        },
+        "CognitoUserPool": {
+          "Type": "AWS::Cognito::UserPool",
+          "Properties": {
+            "UserPoolName": "master-g-api-user-pool-dev",
+            "UsernameAttributes": [
+              "email",
+              "phone_number"
+            ],
+            "AutoVerifiedAttributes": [
+              "email"
+            ],
+            "Policies": {
+              "PasswordPolicy": "<REDACTED>"
+            }
+          }
+        },
+        "CognitoUserPoolClient": {
+          "Type": "AWS::Cognito::UserPoolClient",
+          "Properties": {
+            "ClientName": "master-g-api-user-pool-client-dev",
+            "UserPoolId": {
+              "Ref": "CognitoUserPool"
+            },
+            "AllowedOAuthFlowsUserPoolClient": true,
+            "AllowedOAuthScopes": [
+              "email",
+              "openid",
+              "profile"
+            ],
+            "SupportedIdentityProviders": [
+              "COGNITO"
+            ],
+            "AllowedOAuthFlows": [
+              "code",
+              "implicit"
+            ],
+            "ExplicitAuthFlows": [
+              "ADMIN_NO_SRP_AUTH",
+              "USER_PASSWORD_AUTH"
+            ],
+            "CallbackURLs": [
+              "https://localhost:3000"
+            ],
+            "DefaultRedirectURI": "https://localhost:3000"
+          }
+        },
+        "CognitoUserPoolDomain": {
+          "Type": "AWS::Cognito::UserPoolDomain",
+          "Properties": {
+            "Domain": "master-g-api-auth-domain-dev",
+            "UserPoolId": {
+              "Ref": "CognitoUserPool"
+            }
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+          "Export": {
+            "Name": "sls-master-g-api-dev-ServerlessDeploymentBucketName"
+          }
+        },
+        "TokenAuthrizerLambdaFunctionQualifiedArn": "<REDACTED>",
+        "GetTasksLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "GetTasksLambdaVersionZDnjLH8E5r1lv8rc2Rkz8GNmorGHDhUth6n3wB4Hd38"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
+          }
+        },
+        "CreateTaskLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "CreateTaskLambdaVersionRTre9itTb4tCgMfB4a41ltPETQsM1hl1AUNe84yolQ"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
+          }
+        },
+        "UpdateTaskLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "UpdateTaskLambdaVersionZ2yWAODrEUo1QYZyQXb0NdFcA73KOMUFHEIlkJPpvQ"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
+          }
+        },
+        "SignUpLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "SignUpLambdaVersionsFALopHdr6qn651MvvqGyYCjxIugECkSKZxeu0dw"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
+          }
+        },
+        "SignInLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "SignInLambdaVersionJiC1AeKexgQrzuXhSEcnlWUuNx9bHWgu42puNRg"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
+          }
+        },
+        "HttpApiId": {
+          "Description": "Id of the HTTP API",
+          "Value": {
+            "Ref": "HttpApi"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-HttpApiId"
+          }
+        },
+        "HttpApiUrl": {
+          "Description": "URL of the HTTP API",
+          "Value": {
+            "Fn::Join": [
+              "",
+              [
+                "https://",
+                {
+                  "Ref": "HttpApi"
+                },
+                ".execute-api.",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ".",
+                {
+                  "Ref": "AWS::URLSuffix"
+                }
+              ]
+            ]
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-HttpApiUrl"
+          }
+        }
+      }
+    }
   }
 }

@@ -11,8 +11,9 @@ provider:
   logRetentionInDays: 1
 
   environment:
-    TASKS_TABLE: master-g-api-tasks-${self:provider.stage}
+    TASKS_TABLE: !Ref TasksTable
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient
 
   iam:
     role:
@@ -22,20 +23,22 @@ provider:
             - dynamodb:Scan
             - dynamodb:PutItem
             - dynamodb:UpdateItem
-          Resource: "*"
+          Resource: 
+            - !GetAtt TasksTable.Arn
 
   httpApi:
     authorizers:
-      tokenAuth:
-        type: request
-        identitySource: $request.header.authorization
-        functionName: tokenAuthrizer
-
-        jwtCognitoAuthrizer:
-          type: jwt
-          identitySource: $request.header.Authorization
-          audience: ${self:custom.COGNITO_USER_POOL_CLIENT_ID}
-          issuer: https://cognito-idp.${self:provider.region}.amazonaws.com/${self:custom.cognitoUserPoolId}
+      jwtAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl: !Join ['', [
+          'https://cognito-idp.',
+          '${self:provider.region}',
+          '.amazonaws.com/',
+          '${self:custom.cognito.userPoolId}'
+        ]]
+        audience:
+          - ${self:custom.cognito.userPoolClientId}
+        unauthorizedCacheTimeInSeconds: 300
 
 functions:
 
@@ -48,7 +51,6 @@ functions:
       - httpApi:
           path: /tasks
           method: get
-          authorizer: tokenAuth
 
   createTask:
     handler: src/handlers/createTask.handler
@@ -56,7 +58,6 @@ functions:
       - httpApi:
           path: /tasks
           method: post
-          authorizer: tokenAuth
 
   updateTask:
     handler: src/handlers/updateTask.handler
@@ -64,7 +65,20 @@ functions:
       - httpApi:
           path: /tasks/{id}
           method: put
-          authorizer: tokenAuth
+
+  signUp:
+    handler: src/handlers/auth.signUp
+    events:
+      - httpApi:
+          path: /auth/signup
+          method: post
+
+  signIn:
+    handler: src/handlers/auth.signIn
+    events:
+      - httpApi:
+          path: /auth/login
+          method: post
 
 resources:
   Resources:
@@ -78,5 +92,6 @@ plugins:
   - serverless-plugin-include-dependencies
 
 custom:
-  COGNITO_USER_POOL_ID:!Ref CognitoUserPool
-  COGNITO_USER_POOL_CLIENT_ID:!Ref CognitoUserPoolClient
+  cognito:
+    userPoolId: !Ref CognitoUserPool
+    userPoolClientId: !Ref CognitoUserPoolClient

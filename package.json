@@ -1,6 +1,7 @@
 {
   "name": "master-g-api",
   "version": "1.0.0",
+  "type": "module",
   "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB",
   "main": "server.js",
   "scripts": {

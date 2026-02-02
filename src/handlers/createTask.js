@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 const DocumentClient = new AWS.DynamoDB.DocumentClient();
 
 const TASKS_TABLE_NAME = process.env.TASKS_TABLE;
