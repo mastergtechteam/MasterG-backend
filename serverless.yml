@@ -14,6 +14,9 @@ provider:
     TASKS_TABLE: !Ref TasksTable
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient
+    RETAILER_TABLE: RetailerTable-${self:provider.stage}
+    RETAILER_COUNTER_TABLE: RetailerCounters-${self:provider.stage}
+    PRODUCTS_TABLE: ProductTable-${self:provider.stage}
 
   iam:
     role:
@@ -23,8 +26,15 @@ provider:
             - dynamodb:Scan
             - dynamodb:PutItem
             - dynamodb:UpdateItem
+            - dynamodb:GetItem
+            - dynamodb:DeleteItem
           Resource: 
             - !GetAtt TasksTable.Arn
+            - !GetAtt RetailerTable.Arn
+            - !GetAtt RetailerCounters.Arn
+            - !GetAtt ProductTable.Arn
+
+            
 
   httpApi:
     authorizers:
@@ -187,12 +197,120 @@ functions:
           path: /auth/users/{username}
           method: delete
 
+  createRetailer:
+    handler: src/handlers/retailers/createRetailer.handler
+    events:
+      - httpApi:
+          path: /retailers
+          method: post
+
+  getRetailer:
+    handler: src/handlers/retailers/getRetailer.handler
+    events:
+      - httpApi:
+          path: /retailers/{id}
+          method: get
+
+  updateRetailer:
+    handler: src/handlers/retailers/updateRetailer.handler
+    events:
+      - httpApi:
+          path: /retailers/{id}
+          method: put
+
+  deleteRetailer:
+    handler: src/handlers/retailers/deleteRetailer.handler
+    events:
+      - httpApi:
+          path: /retailers/{id}
+          method: delete
+
+  listRetailers:
+    handler: src/handlers/retailers/listRetailers.handler
+    events:
+      - httpApi:
+          path: /retailers
+          method: get
+
+  createProduct:
+    handler: src/handlers/products/createProduct.handler
+    events:
+      - httpApi:
+          path: /products
+          method: post
+
+  getProduct:
+    handler: src/handlers/products/getProduct.handler
+    events:
+      - httpApi:
+          path: /products/{id}
+          method: get
+
+  listProducts:
+    handler: src/handlers/products/listProducts.handler
+    events:
+      - httpApi:
+          path: /products
+          method: get
+
+  updateProduct:
+    handler: src/handlers/products/updateProduct.handler
+    events:
+      - httpApi:
+          path: /products/{id}
+          method: put
+
+  deleteProduct:
+    handler: src/handlers/products/deleteProduct.handler
+    events:
+      - httpApi:
+          path: /products/{id}
+          method: delete
+
+
 resources:
   Resources:
     TasksTable: ${file(resources/TasksTable.yml):TasksTable}
     CognitoUserPool: ${file(resources/Cognito.yml):CognitoUserPool}
     CognitoUserPoolClient: ${file(resources/Cognito.yml):CognitoUserPoolClient}
     CognitoUserPoolDomain: ${file(resources/Cognito.yml):CognitoUserPoolDomain}
+    RetailerTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: RetailerTable-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: retailerId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: retailerId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    RetailerCounters:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: RetailerCounters-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    ProductTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ProductTable-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: productId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: productId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    
+
+
+        
 
 plugins:
   - serverless-offline
