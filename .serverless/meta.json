@@ -111,6 +111,44 @@
                 "RetentionInDays": 1
               }
             },
+            "RefreshTokenLogGroup": "<REDACTED>",
+            "ConfirmSignUpLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-confirmSignUp",
+                "RetentionInDays": 1
+              }
+            },
+            "ResendConfirmationCodeLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-resendConfirmationCode",
+                "RetentionInDays": 1
+              }
+            },
+            "AdminConfirmUserLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-adminConfirmUser",
+                "RetentionInDays": 1
+              }
+            },
+            "ForgotPasswordLogGroup": "<REDACTED>",
+            "ResetPasswordLogGroup": "<REDACTED>",
+            "ListCognitoUsersLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-listCognitoUsers",
+                "RetentionInDays": 1
+              }
+            },
+            "DeleteAuthUserLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/master-g-api-dev-deleteAuthUser",
+                "RetentionInDays": 1
+              }
+            },
             "IamRoleLambdaExecution": {
               "Type": "AWS::IAM::Role",
               "Properties": {
@@ -211,7 +249,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                  "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
                 },
                 "Handler": "src/handlers/getTask.handler",
                 "Runtime": "nodejs18.x",
@@ -245,7 +283,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                  "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
                 },
                 "Handler": "src/handlers/createTask.handler",
                 "Runtime": "nodejs18.x",
@@ -279,7 +317,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                  "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
                 },
                 "Handler": "src/handlers/updateTask.handler",
                 "Runtime": "nodejs18.x",
@@ -313,7 +351,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                  "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
                 },
                 "Handler": "src/handlers/auth.signUp",
                 "Runtime": "nodejs18.x",
@@ -347,7 +385,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                  "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
                 },
                 "Handler": "src/handlers/auth.signIn",
                 "Runtime": "nodejs18.x",
@@ -376,55 +414,299 @@
                 "SignInLogGroup"
               ]
             },
-            "TokenAuthrizerLambdaVersionhfzSdpIRFekWdiSghsDdZKb7fMJcbaJ40KrNTNKRO8A": "<REDACTED>",
-            "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU": {
+            "RefreshTokenLambdaFunction": "<REDACTED>",
+            "ConfirmSignUpLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/auth.confirmSignUp",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-confirmSignUp",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "ConfirmSignUpIamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "ConfirmSignUpIamRoleLambdaExecution",
+                "ConfirmSignUpLogGroup"
+              ]
+            },
+            "ResendConfirmationCodeLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/auth.resendConfirmationCode",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-resendConfirmationCode",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "ResendConfirmationCodeIamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "ResendConfirmationCodeIamRoleLambdaExecution",
+                "ResendConfirmationCodeLogGroup"
+              ]
+            },
+            "AdminConfirmUserLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/auth.adminConfirmUser",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-adminConfirmUser",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    },
+                    "USER_POOL_ID": {
+                      "Ref": "CognitoUserPool"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "AdminConfirmUserIamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "AdminConfirmUserIamRoleLambdaExecution",
+                "AdminConfirmUserLogGroup"
+              ]
+            },
+            "ForgotPasswordLambdaFunction": "<REDACTED>",
+            "ResetPasswordLambdaFunction": "<REDACTED>",
+            "ListCognitoUsersLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/auth.listCognitoUsers",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-listCognitoUsers",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Description": "List all onboarded users from Cognito User Pool",
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    },
+                    "USER_POOL_ID": {
+                      "Ref": "CognitoUserPool"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "ListCognitoUsersIamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "ListCognitoUsersIamRoleLambdaExecution",
+                "ListCognitoUsersLogGroup"
+              ]
+            },
+            "DeleteAuthUserLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                  "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                },
+                "Handler": "src/handlers/auth.deleteUser",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "master-g-api-dev-deleteAuthUser",
+                "MemorySize": 128,
+                "Timeout": 6,
+                "Description": "Delete a user completely from Cognito User Pool",
+                "Environment": {
+                  "Variables": {
+                    "TASKS_TABLE": {
+                      "Ref": "TasksTable"
+                    },
+                    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                    "COGNITO_CLIENT_ID": {
+                      "Ref": "CognitoUserPoolClient"
+                    },
+                    "USER_POOL_ID": {
+                      "Ref": "CognitoUserPool"
+                    }
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "DeleteAuthUserIamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "DeleteAuthUserIamRoleLambdaExecution",
+                "DeleteAuthUserLogGroup"
+              ]
+            },
+            "TokenAuthrizerLambdaVersiontNfeP2SCB9uKwGLkzeacuFHKxsMGXlv2KceAQb6365I": "<REDACTED>",
+            "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "GetTasksLambdaFunction"
                 },
-                "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
               }
             },
-            "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE": {
+            "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "CreateTaskLambdaFunction"
                 },
-                "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
               }
             },
-            "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE": {
+            "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "UpdateTaskLambdaFunction"
                 },
-                "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
               }
             },
-            "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww": {
+            "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "SignUpLambdaFunction"
                 },
-                "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
               }
             },
-            "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU": {
+            "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "SignInLambdaFunction"
                 },
-                "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              }
+            },
+            "RefreshTokenLambdaVersionK505zLzIreIsA8KgBd5Rk1sAV7yPV2NrzxiMhpoTk": "<REDACTED>",
+            "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "ConfirmSignUpLambdaFunction"
+                },
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              }
+            },
+            "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "ResendConfirmationCodeLambdaFunction"
+                },
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              }
+            },
+            "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "AdminConfirmUserLambdaFunction"
+                },
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              }
+            },
+            "ForgotPasswordLambdaVersion5hzZxs7CPgyME131uQaBFNakJDdeZ0X5qO02aCNQ7fo": "<REDACTED>",
+            "ResetPasswordLambdaVersion1B3ENKM3U1mLGSvrQxm2XFmcobP6dj74zOtlsvuI8": "<REDACTED>",
+            "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "ListCognitoUsersLambdaFunction"
+                },
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY=",
+                "Description": "List all onboarded users from Cognito User Pool"
+              }
+            },
+            "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "DeleteAuthUserLambdaFunction"
+                },
+                "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY=",
+                "Description": "Delete a user completely from Cognito User Pool"
               }
             },
             "HttpApi": {
@@ -867,6 +1149,798 @@
               },
               "DependsOn": "HttpApiIntegrationSignIn"
             },
+            "RefreshTokenLambdaPermissionHttpApi": "<REDACTED>",
+            "HttpApiIntegrationRefreshToken": "<REDACTED>",
+            "HttpApiRoutePostAuthRefreshDashtoken": "<REDACTED>",
+            "ConfirmSignUpLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "ConfirmSignUpLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationConfirmSignUp": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "ConfirmSignUpLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRoutePostAuthConfirm": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "POST /auth/confirm",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationConfirmSignUp"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationConfirmSignUp"
+            },
+            "ResendConfirmationCodeLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "ResendConfirmationCodeLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationResendConfirmationCode": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "ResendConfirmationCodeLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRoutePostAuthResendDashcode": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "POST /auth/resend-code",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationResendConfirmationCode"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationResendConfirmationCode"
+            },
+            "AdminConfirmUserLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "AdminConfirmUserLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationAdminConfirmUser": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "AdminConfirmUserLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRoutePostAuthAdminDashconfirm": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "POST /auth/admin-confirm",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationAdminConfirmUser"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationAdminConfirmUser"
+            },
+            "ForgotPasswordLambdaPermissionHttpApi": "<REDACTED>",
+            "HttpApiIntegrationForgotPassword": "<REDACTED>",
+            "HttpApiRoutePostAuthForgotDashpassword": "<REDACTED>",
+            "ResetPasswordLambdaPermissionHttpApi": "<REDACTED>",
+            "HttpApiIntegrationResetPassword": "<REDACTED>",
+            "HttpApiRoutePostAuthResetDashpassword": "<REDACTED>",
+            "ListCognitoUsersLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "ListCognitoUsersLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationListCognitoUsers": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "ListCognitoUsersLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRouteGetAuthUsers": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "GET /auth/users",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationListCognitoUsers"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationListCognitoUsers"
+            },
+            "DeleteAuthUserLambdaPermissionHttpApi": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "DeleteAuthUserLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "HttpApi"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "HttpApiIntegrationDeleteAuthUser": {
+              "Type": "AWS::ApiGatewayV2::Integration",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "IntegrationType": "AWS_PROXY",
+                "IntegrationUri": {
+                  "Fn::GetAtt": [
+                    "DeleteAuthUserLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "PayloadFormatVersion": "2.0",
+                "TimeoutInMillis": 30000
+              }
+            },
+            "HttpApiRouteDeleteAuthUsersUsernameVar": {
+              "Type": "AWS::ApiGatewayV2::Route",
+              "Properties": {
+                "ApiId": {
+                  "Ref": "HttpApi"
+                },
+                "RouteKey": "DELETE /auth/users/{username}",
+                "Target": {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      "integrations",
+                      {
+                        "Ref": "HttpApiIntegrationDeleteAuthUser"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "DependsOn": "HttpApiIntegrationDeleteAuthUser"
+            },
+            "RefreshTokenIamRoleLambdaExecution": "<REDACTED>",
+            "ConfirmSignUpIamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "master-g-api",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-confirmSignUp:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "cognito-idp:ConfirmSignUp"
+                          ],
+                          "Resource": {
+                            "Fn::GetAtt": [
+                              "CognitoUserPool",
+                              "Arn"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "confirmSignUp",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                },
+                "ManagedPolicyArns": []
+              }
+            },
+            "ResendConfirmationCodeIamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "master-g-api",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-resendConfirmationCode:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "cognito-idp:ResendConfirmationCode"
+                          ],
+                          "Resource": {
+                            "Fn::GetAtt": [
+                              "CognitoUserPool",
+                              "Arn"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "resendConfirmationCode",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                },
+                "ManagedPolicyArns": []
+              }
+            },
+            "AdminConfirmUserIamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "master-g-api",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-adminConfirmUser:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "cognito-idp:AdminConfirmSignUp"
+                          ],
+                          "Resource": {
+                            "Fn::GetAtt": [
+                              "CognitoUserPool",
+                              "Arn"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "adminConfirmUser",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                },
+                "ManagedPolicyArns": []
+              }
+            },
+            "ForgotPasswordIamRoleLambdaExecution": "<REDACTED>",
+            "ResetPasswordIamRoleLambdaExecution": "<REDACTED>",
+            "ListCognitoUsersIamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "master-g-api",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-listCognitoUsers:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "cognito-idp:ListUsers"
+                          ],
+                          "Resource": {
+                            "Fn::GetAtt": [
+                              "CognitoUserPool",
+                              "Arn"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "listCognitoUsers",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                },
+                "ManagedPolicyArns": []
+              }
+            },
+            "DeleteAuthUserIamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "master-g-api",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-deleteAuthUser:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "cognito-idp:AdminDeleteUser"
+                          ],
+                          "Resource": {
+                            "Fn::GetAtt": [
+                              "CognitoUserPool",
+                              "Arn"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "deleteAuthUser",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                },
+                "ManagedPolicyArns": []
+              }
+            },
             "TasksTable": {
               "Type": "AWS::DynamoDB::Table",
               "Properties": {
@@ -953,7 +2027,7 @@
             "GetTasksLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU"
+                "Ref": "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k"
               },
               "Export": {
                 "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
@@ -962,7 +2036,7 @@
             "CreateTaskLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE"
+                "Ref": "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc"
               },
               "Export": {
                 "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
@@ -971,7 +2045,7 @@
             "UpdateTaskLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE"
+                "Ref": "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ"
               },
               "Export": {
                 "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
@@ -980,7 +2054,7 @@
             "SignUpLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww"
+                "Ref": "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw"
               },
               "Export": {
                 "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
@@ -989,10 +2063,58 @@
             "SignInLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU"
+                "Ref": "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno"
               },
               "Export": {
                 "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
+              }
+            },
+            "RefreshTokenLambdaFunctionQualifiedArn": "<REDACTED>",
+            "ConfirmSignUpLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-ConfirmSignUpLambdaFunctionQualifiedArn"
+              }
+            },
+            "ResendConfirmationCodeLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-ResendConfirmationCodeLambdaFunctionQualifiedArn"
+              }
+            },
+            "AdminConfirmUserLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-AdminConfirmUserLambdaFunctionQualifiedArn"
+              }
+            },
+            "ForgotPasswordLambdaFunctionQualifiedArn": "<REDACTED>",
+            "ResetPasswordLambdaFunctionQualifiedArn": "<REDACTED>",
+            "ListCognitoUsersLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-ListCognitoUsersLambdaFunctionQualifiedArn"
+              }
+            },
+            "DeleteAuthUserLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA"
+              },
+              "Export": {
+                "Name": "sls-master-g-api-dev-DeleteAuthUserLambdaFunctionQualifiedArn"
               }
             },
             "HttpApiId": {
@@ -1054,7 +2176,7 @@
           "timeout": 6,
           "runtime": "nodejs18.x",
           "vpc": {},
-          "versionLogicalId": "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU"
+          "versionLogicalId": "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k"
         },
         "createTask": {
           "handler": "src/handlers/createTask.handler",
@@ -1075,7 +2197,7 @@
           "timeout": 6,
           "runtime": "nodejs18.x",
           "vpc": {},
-          "versionLogicalId": "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE"
+          "versionLogicalId": "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc"
         },
         "updateTask": {
           "handler": "src/handlers/updateTask.handler",
@@ -1096,7 +2218,7 @@
           "timeout": 6,
           "runtime": "nodejs18.x",
           "vpc": {},
-          "versionLogicalId": "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE"
+          "versionLogicalId": "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ"
         },
         "signUp": {
           "handler": "src/handlers/auth.signUp",
@@ -1116,7 +2238,7 @@
           "timeout": 6,
           "runtime": "nodejs18.x",
           "vpc": {},
-          "versionLogicalId": "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww"
+          "versionLogicalId": "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw"
         },
         "signIn": {
           "handler": "src/handlers/auth.signIn",
@@ -1136,7 +2258,197 @@
           "timeout": 6,
           "runtime": "nodejs18.x",
           "vpc": {},
-          "versionLogicalId": "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU"
+          "versionLogicalId": "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno"
+        },
+        "refreshToken": "<REDACTED>",
+        "confirmSignUp": {
+          "handler": "src/handlers/auth.confirmSignUp",
+          "iamRoleStatements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "cognito-idp:ConfirmSignUp"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CognitoUserPool",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "events": [
+            {
+              "httpApi": {
+                "path": "/auth/confirm",
+                "method": "post"
+              },
+              "resolvedMethod": "POST",
+              "resolvedPath": "/auth/confirm"
+            }
+          ],
+          "name": "master-g-api-dev-confirmSignUp",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc"
+        },
+        "resendConfirmationCode": {
+          "handler": "src/handlers/auth.resendConfirmationCode",
+          "iamRoleStatements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "cognito-idp:ResendConfirmationCode"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CognitoUserPool",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "events": [
+            {
+              "httpApi": {
+                "path": "/auth/resend-code",
+                "method": "post"
+              },
+              "resolvedMethod": "POST",
+              "resolvedPath": "/auth/resend-code"
+            }
+          ],
+          "name": "master-g-api-dev-resendConfirmationCode",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k"
+        },
+        "adminConfirmUser": {
+          "handler": "src/handlers/auth.adminConfirmUser",
+          "iamRoleStatements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "cognito-idp:AdminConfirmSignUp"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CognitoUserPool",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "environment": {
+            "USER_POOL_ID": {
+              "Ref": "CognitoUserPool"
+            }
+          },
+          "events": [
+            {
+              "httpApi": {
+                "path": "/auth/admin-confirm",
+                "method": "post"
+              },
+              "resolvedMethod": "POST",
+              "resolvedPath": "/auth/admin-confirm"
+            }
+          ],
+          "name": "master-g-api-dev-adminConfirmUser",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE"
+        },
+        "forgotPassword": "<REDACTED>",
+        "resetPassword": "<REDACTED>",
+        "listCognitoUsers": {
+          "handler": "src/handlers/auth.listCognitoUsers",
+          "description": "List all onboarded users from Cognito User Pool",
+          "iamRoleStatements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "cognito-idp:ListUsers"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CognitoUserPool",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "environment": {
+            "USER_POOL_ID": {
+              "Ref": "CognitoUserPool"
+            }
+          },
+          "events": [
+            {
+              "httpApi": {
+                "path": "/auth/users",
+                "method": "get"
+              },
+              "resolvedMethod": "GET",
+              "resolvedPath": "/auth/users"
+            }
+          ],
+          "name": "master-g-api-dev-listCognitoUsers",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU"
+        },
+        "deleteAuthUser": {
+          "handler": "src/handlers/auth.deleteUser",
+          "description": "Delete a user completely from Cognito User Pool",
+          "iamRoleStatements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "cognito-idp:AdminDeleteUser"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CognitoUserPool",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "environment": {
+            "USER_POOL_ID": {
+              "Ref": "CognitoUserPool"
+            }
+          },
+          "events": [
+            {
+              "httpApi": {
+                "path": "/auth/users/{username}",
+                "method": "delete"
+              },
+              "resolvedMethod": "DELETE",
+              "resolvedPath": "/auth/users/{username}"
+            }
+          ],
+          "name": "master-g-api-dev-deleteAuthUser",
+          "package": {},
+          "memory": 128,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "vpc": {},
+          "versionLogicalId": "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA"
         }
       },
       "resources": {
@@ -1338,6 +2650,44 @@
               "RetentionInDays": 1
             }
           },
+          "RefreshTokenLogGroup": "<REDACTED>",
+          "ConfirmSignUpLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-confirmSignUp",
+              "RetentionInDays": 1
+            }
+          },
+          "ResendConfirmationCodeLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-resendConfirmationCode",
+              "RetentionInDays": 1
+            }
+          },
+          "AdminConfirmUserLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-adminConfirmUser",
+              "RetentionInDays": 1
+            }
+          },
+          "ForgotPasswordLogGroup": "<REDACTED>",
+          "ResetPasswordLogGroup": "<REDACTED>",
+          "ListCognitoUsersLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-listCognitoUsers",
+              "RetentionInDays": 1
+            }
+          },
+          "DeleteAuthUserLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-deleteAuthUser",
+              "RetentionInDays": 1
+            }
+          },
           "IamRoleLambdaExecution": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -1438,7 +2788,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
               },
               "Handler": "src/handlers/getTask.handler",
               "Runtime": "nodejs18.x",
@@ -1472,7 +2822,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
               },
               "Handler": "src/handlers/createTask.handler",
               "Runtime": "nodejs18.x",
@@ -1506,7 +2856,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
               },
               "Handler": "src/handlers/updateTask.handler",
               "Runtime": "nodejs18.x",
@@ -1540,7 +2890,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.signUp",
               "Runtime": "nodejs18.x",
@@ -1574,7 +2924,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.signIn",
               "Runtime": "nodejs18.x",
@@ -1603,55 +2953,299 @@
               "SignInLogGroup"
             ]
           },
-          "TokenAuthrizerLambdaVersionhfzSdpIRFekWdiSghsDdZKb7fMJcbaJ40KrNTNKRO8A": "<REDACTED>",
-          "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU": {
+          "RefreshTokenLambdaFunction": "<REDACTED>",
+          "ConfirmSignUpLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/auth.confirmSignUp",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-confirmSignUp",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "ConfirmSignUpIamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "ConfirmSignUpIamRoleLambdaExecution",
+              "ConfirmSignUpLogGroup"
+            ]
+          },
+          "ResendConfirmationCodeLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/auth.resendConfirmationCode",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-resendConfirmationCode",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "ResendConfirmationCodeIamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "ResendConfirmationCodeIamRoleLambdaExecution",
+              "ResendConfirmationCodeLogGroup"
+            ]
+          },
+          "AdminConfirmUserLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/auth.adminConfirmUser",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-adminConfirmUser",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  },
+                  "USER_POOL_ID": {
+                    "Ref": "CognitoUserPool"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "AdminConfirmUserIamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "AdminConfirmUserIamRoleLambdaExecution",
+              "AdminConfirmUserLogGroup"
+            ]
+          },
+          "ForgotPasswordLambdaFunction": "<REDACTED>",
+          "ResetPasswordLambdaFunction": "<REDACTED>",
+          "ListCognitoUsersLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/auth.listCognitoUsers",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-listCognitoUsers",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Description": "List all onboarded users from Cognito User Pool",
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  },
+                  "USER_POOL_ID": {
+                    "Ref": "CognitoUserPool"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "ListCognitoUsersIamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "ListCognitoUsersIamRoleLambdaExecution",
+              "ListCognitoUsersLogGroup"
+            ]
+          },
+          "DeleteAuthUserLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/auth.deleteUser",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-deleteAuthUser",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Description": "Delete a user completely from Cognito User Pool",
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "Ref": "TasksTable"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "Ref": "CognitoUserPoolClient"
+                  },
+                  "USER_POOL_ID": {
+                    "Ref": "CognitoUserPool"
+                  }
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "DeleteAuthUserIamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "DeleteAuthUserIamRoleLambdaExecution",
+              "DeleteAuthUserLogGroup"
+            ]
+          },
+          "TokenAuthrizerLambdaVersiontNfeP2SCB9uKwGLkzeacuFHKxsMGXlv2KceAQb6365I": "<REDACTED>",
+          "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetTasksLambdaFunction"
               },
-              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
             }
           },
-          "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE": {
+          "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateTaskLambdaFunction"
               },
-              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
             }
           },
-          "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE": {
+          "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UpdateTaskLambdaFunction"
               },
-              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
             }
           },
-          "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww": {
+          "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignUpLambdaFunction"
               },
-              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
             }
           },
-          "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU": {
+          "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignInLambdaFunction"
               },
-              "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+            }
+          },
+          "RefreshTokenLambdaVersionK505zLzIreIsA8KgBd5Rk1sAV7yPV2NrzxiMhpoTk": "<REDACTED>",
+          "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ConfirmSignUpLambdaFunction"
+              },
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+            }
+          },
+          "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ResendConfirmationCodeLambdaFunction"
+              },
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+            }
+          },
+          "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AdminConfirmUserLambdaFunction"
+              },
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+            }
+          },
+          "ForgotPasswordLambdaVersion5hzZxs7CPgyME131uQaBFNakJDdeZ0X5qO02aCNQ7fo": "<REDACTED>",
+          "ResetPasswordLambdaVersion1B3ENKM3U1mLGSvrQxm2XFmcobP6dj74zOtlsvuI8": "<REDACTED>",
+          "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ListCognitoUsersLambdaFunction"
+              },
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY=",
+              "Description": "List all onboarded users from Cognito User Pool"
+            }
+          },
+          "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "DeleteAuthUserLambdaFunction"
+              },
+              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY=",
+              "Description": "Delete a user completely from Cognito User Pool"
             }
           },
           "HttpApi": {
@@ -2094,6 +3688,798 @@
             },
             "DependsOn": "HttpApiIntegrationSignIn"
           },
+          "RefreshTokenLambdaPermissionHttpApi": "<REDACTED>",
+          "HttpApiIntegrationRefreshToken": "<REDACTED>",
+          "HttpApiRoutePostAuthRefreshDashtoken": "<REDACTED>",
+          "ConfirmSignUpLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ConfirmSignUpLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationConfirmSignUp": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "ConfirmSignUpLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePostAuthConfirm": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /auth/confirm",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationConfirmSignUp"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationConfirmSignUp"
+          },
+          "ResendConfirmationCodeLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ResendConfirmationCodeLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationResendConfirmationCode": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "ResendConfirmationCodeLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePostAuthResendDashcode": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /auth/resend-code",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationResendConfirmationCode"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationResendConfirmationCode"
+          },
+          "AdminConfirmUserLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "AdminConfirmUserLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationAdminConfirmUser": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "AdminConfirmUserLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePostAuthAdminDashconfirm": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /auth/admin-confirm",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationAdminConfirmUser"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationAdminConfirmUser"
+          },
+          "ForgotPasswordLambdaPermissionHttpApi": "<REDACTED>",
+          "HttpApiIntegrationForgotPassword": "<REDACTED>",
+          "HttpApiRoutePostAuthForgotDashpassword": "<REDACTED>",
+          "ResetPasswordLambdaPermissionHttpApi": "<REDACTED>",
+          "HttpApiIntegrationResetPassword": "<REDACTED>",
+          "HttpApiRoutePostAuthResetDashpassword": "<REDACTED>",
+          "ListCognitoUsersLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ListCognitoUsersLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationListCognitoUsers": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "ListCognitoUsersLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteGetAuthUsers": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "GET /auth/users",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationListCognitoUsers"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationListCognitoUsers"
+          },
+          "DeleteAuthUserLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "DeleteAuthUserLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationDeleteAuthUser": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "Fn::GetAtt": [
+                  "DeleteAuthUserLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteDeleteAuthUsersUsernameVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "DELETE /auth/users/{username}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationDeleteAuthUser"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationDeleteAuthUser"
+          },
+          "RefreshTokenIamRoleLambdaExecution": "<REDACTED>",
+          "ConfirmSignUpIamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "master-g-api",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-confirmSignUp:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "cognito-idp:ConfirmSignUp"
+                        ],
+                        "Resource": {
+                          "Fn::GetAtt": [
+                            "CognitoUserPool",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "master-g-api",
+                    "dev",
+                    "confirmSignUp",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "ManagedPolicyArns": []
+            }
+          },
+          "ResendConfirmationCodeIamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "master-g-api",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-resendConfirmationCode:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "cognito-idp:ResendConfirmationCode"
+                        ],
+                        "Resource": {
+                          "Fn::GetAtt": [
+                            "CognitoUserPool",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "master-g-api",
+                    "dev",
+                    "resendConfirmationCode",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "ManagedPolicyArns": []
+            }
+          },
+          "AdminConfirmUserIamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "master-g-api",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-adminConfirmUser:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "cognito-idp:AdminConfirmSignUp"
+                        ],
+                        "Resource": {
+                          "Fn::GetAtt": [
+                            "CognitoUserPool",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "master-g-api",
+                    "dev",
+                    "adminConfirmUser",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "ManagedPolicyArns": []
+            }
+          },
+          "ForgotPasswordIamRoleLambdaExecution": "<REDACTED>",
+          "ResetPasswordIamRoleLambdaExecution": "<REDACTED>",
+          "ListCognitoUsersIamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "master-g-api",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-listCognitoUsers:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "cognito-idp:ListUsers"
+                        ],
+                        "Resource": {
+                          "Fn::GetAtt": [
+                            "CognitoUserPool",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "master-g-api",
+                    "dev",
+                    "listCognitoUsers",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "ManagedPolicyArns": []
+            }
+          },
+          "DeleteAuthUserIamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "master-g-api",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-deleteAuthUser:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "cognito-idp:AdminDeleteUser"
+                        ],
+                        "Resource": {
+                          "Fn::GetAtt": [
+                            "CognitoUserPool",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "master-g-api",
+                    "dev",
+                    "deleteAuthUser",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "ManagedPolicyArns": []
+            }
+          },
           "TasksTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
@@ -2180,7 +4566,7 @@
           "GetTasksLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU"
+              "Ref": "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
@@ -2189,7 +4575,7 @@
           "CreateTaskLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE"
+              "Ref": "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
@@ -2198,7 +4584,7 @@
           "UpdateTaskLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE"
+              "Ref": "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
@@ -2207,7 +4593,7 @@
           "SignUpLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww"
+              "Ref": "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
@@ -2216,10 +4602,58 @@
           "SignInLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU"
+              "Ref": "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
+            }
+          },
+          "RefreshTokenLambdaFunctionQualifiedArn": "<REDACTED>",
+          "ConfirmSignUpLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-ConfirmSignUpLambdaFunctionQualifiedArn"
+            }
+          },
+          "ResendConfirmationCodeLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-ResendConfirmationCodeLambdaFunctionQualifiedArn"
+            }
+          },
+          "AdminConfirmUserLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-AdminConfirmUserLambdaFunctionQualifiedArn"
+            }
+          },
+          "ForgotPasswordLambdaFunctionQualifiedArn": "<REDACTED>",
+          "ResetPasswordLambdaFunctionQualifiedArn": "<REDACTED>",
+          "ListCognitoUsersLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-ListCognitoUsersLambdaFunctionQualifiedArn"
+            }
+          },
+          "DeleteAuthUserLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-DeleteAuthUserLambdaFunctionQualifiedArn"
             }
           },
           "HttpApiId": {
@@ -2269,7 +4703,7 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
-    "serviceRawFile": "service: master-g-api\n\nframeworkVersion: '4'\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  stage: ${opt:stage, 'dev'}\n  region: ${opt:region, 'ap-south-1'}\n  memorySize: 128\n  logRetentionInDays: 1\n\n  environment:\n    TASKS_TABLE: !Ref TasksTable\n    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1\n    COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient\n\n  iam:\n    role:\n      statements:\n        - Effect: Allow\n          Action:\n            - dynamodb:Scan\n            - dynamodb:PutItem\n            - dynamodb:UpdateItem\n          Resource: \n            - !GetAtt TasksTable.Arn\n\n  httpApi:\n    authorizers:\n      jwtAuthorizer:\n        identitySource: $request.header.Authorization\n        issuerUrl: !Join ['', [\n          'https://cognito-idp.',\n          '${self:provider.region}',\n          '.amazonaws.com/',\n          '${self:custom.cognito.userPoolId}'\n        ]]\n        audience:\n          - ${self:custom.cognito.userPoolClientId}\n        unauthorizedCacheTimeInSeconds: 300\n\nfunctions:\n\n  tokenAuthrizer:\n    handler: src/authorizers/tokenAuthorizer.handler\n\n  getTasks:\n    handler: src/handlers/getTask.handler\n    events:\n      - httpApi:\n          path: /tasks\n          method: get\n          authorizer: jwtAuthorizer\n\n  createTask:\n    handler: src/handlers/createTask.handler\n    events:\n      - httpApi:\n          path: /tasks\n          method: post\n          authorizer: jwtAuthorizer\n\n  updateTask:\n    handler: src/handlers/updateTask.handler\n    events:\n      - httpApi:\n          path: /tasks/{id}\n          method: put\n          authorizer: jwtAuthorizer\n\n  signUp:\n    handler: src/handlers/auth.signUp\n    events:\n      - httpApi:\n          path: /auth/signup\n          method: post\n\n  signIn:\n    handler: src/handlers/auth.signIn\n    events:\n      - httpApi:\n          path: /auth/login\n          method: post\n\nresources:\n  Resources:\n    TasksTable: ${file(resources/TasksTable.yml):TasksTable}\n    CognitoUserPool: ${file(resources/Cognito.yml):CognitoUserPool}\n    CognitoUserPoolClient: ${file(resources/Cognito.yml):CognitoUserPoolClient}\n    CognitoUserPoolDomain: ${file(resources/Cognito.yml):CognitoUserPoolDomain}\n\nplugins:\n  - serverless-offline\n  - serverless-plugin-include-dependencies\n\ncustom:\n  cognito:\n    userPoolId: !Ref CognitoUserPool\n    userPoolClientId: !Ref CognitoUserPoolClient",
+    "serviceRawFile": "service: master-g-api\n\nframeworkVersion: '4'\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  stage: ${opt:stage, 'dev'}\n  region: ${opt:region, 'ap-south-1'}\n  memorySize: 128\n  logRetentionInDays: 1\n\n  environment:\n    TASKS_TABLE: !Ref TasksTable\n    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1\n    COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient\n\n  iam:\n    role:\n      statements:\n        - Effect: Allow\n          Action:\n            - dynamodb:Scan\n            - dynamodb:PutItem\n            - dynamodb:UpdateItem\n          Resource: \n            - !GetAtt TasksTable.Arn\n\n  httpApi:\n    authorizers:\n      jwtAuthorizer:\n        identitySource: $request.header.Authorization\n        issuerUrl: !Join ['', [\n          'https://cognito-idp.',\n          '${self:provider.region}',\n          '.amazonaws.com/',\n          '${self:custom.cognito.userPoolId}'\n        ]]\n        audience:\n          - ${self:custom.cognito.userPoolClientId}\n        unauthorizedCacheTimeInSeconds: 300\n\nfunctions:\n\n  tokenAuthrizer:\n    handler: src/authorizers/tokenAuthorizer.handler\n\n  getTasks:\n    handler: src/handlers/getTask.handler\n    events:\n      - httpApi:\n          path: /tasks\n          method: get\n          authorizer: jwtAuthorizer\n\n  createTask:\n    handler: src/handlers/createTask.handler\n    events:\n      - httpApi:\n          path: /tasks\n          method: post\n          authorizer: jwtAuthorizer\n\n  updateTask:\n    handler: src/handlers/updateTask.handler\n    events:\n      - httpApi:\n          path: /tasks/{id}\n          method: put\n          authorizer: jwtAuthorizer\n\n  signUp:\n    handler: src/handlers/auth.signUp\n    events:\n      - httpApi:\n          path: /auth/signup\n          method: post\n\n  signIn:\n    handler: src/handlers/auth.signIn\n    events:\n      - httpApi:\n          path: /auth/login\n          method: post\n\n  refreshToken:\n    handler: src/handlers/auth.refreshToken\n    iamRoleStatements:\n      - Effect: Allow\n        Action:\n          - cognito-idp:InitiateAuth\n        Resource: !GetAtt CognitoUserPool.Arn\n    events:\n      - httpApi:\n          path: /auth/refresh-token\n          method: post\n\n  confirmSignUp:\n    handler: src/handlers/auth.confirmSignUp\n    iamRoleStatements:\n      - Effect: Allow\n        Action:\n          - cognito-idp:ConfirmSignUp\n        Resource: !GetAtt CognitoUserPool.Arn\n    events:\n      - httpApi:\n          path: /auth/confirm\n          method: post\n\n  resendConfirmationCode:\n    handler: src/handlers/auth.resendConfirmationCode\n    iamRoleStatements:\n      - Effect: Allow\n        Action:\n          - cognito-idp:ResendConfirmationCode\n        Resource: !GetAtt CognitoUserPool.Arn\n    events:\n      - httpApi:\n          path: /auth/resend-code\n          method: post\n\n  adminConfirmUser:\n    handler: src/handlers/auth.adminConfirmUser\n    iamRoleStatements:\n      - Effect: Allow\n        Action:\n          - cognito-idp:AdminConfirmSignUp\n        Resource: !GetAtt CognitoUserPool.Arn\n    environment:\n      USER_POOL_ID: !Ref CognitoUserPool\n    events:\n      - httpApi:\n          path: /auth/admin-confirm\n          method: post\n\n  forgotPassword:\n    handler: src/handlers/auth.forgotPassword\n    iamRoleStatements:\n      - Effect: Allow\n        Action:\n          - cognito-idp:ForgotPassword\n        Resource: !GetAtt CognitoUserPool.Arn\n    events:\n      - httpApi:\n          path: /auth/forgot-password\n          method: post\n\n  resetPassword:\n    handler: src/handlers/auth.resetPassword\n    iamRoleStatements:\n      - Effect: Allow\n        Action:\n          - cognito-idp:ConfirmForgotPassword\n        Resource: !GetAtt CognitoUserPool.Arn\n    events:\n      - httpApi:\n          path: /auth/reset-password\n          method: post\n\n  listCognitoUsers:\n    handler: src/handlers/auth.listCognitoUsers\n    description: List all onboarded users from Cognito User Pool\n    iamRoleStatements:\n      - Effect: Allow\n        Action:\n          - cognito-idp:ListUsers\n        Resource: !GetAtt CognitoUserPool.Arn\n    environment:\n      USER_POOL_ID: !Ref CognitoUserPool\n    events:\n      - httpApi:\n          path: /auth/users\n          method: get\n\n  deleteAuthUser:\n    handler: src/handlers/auth.deleteUser\n    description: Delete a user completely from Cognito User Pool\n    iamRoleStatements:\n      - Effect: Allow\n        Action:\n          - cognito-idp:AdminDeleteUser\n        Resource: !GetAtt CognitoUserPool.Arn\n    environment:\n      USER_POOL_ID: !Ref CognitoUserPool\n    events:\n      - httpApi:\n          path: /auth/users/{username}\n          method: delete\n\nresources:\n  Resources:\n    TasksTable: ${file(resources/TasksTable.yml):TasksTable}\n    CognitoUserPool: ${file(resources/Cognito.yml):CognitoUserPool}\n    CognitoUserPoolClient: ${file(resources/Cognito.yml):CognitoUserPoolClient}\n    CognitoUserPoolDomain: ${file(resources/Cognito.yml):CognitoUserPoolDomain}\n\nplugins:\n  - serverless-offline\n  - serverless-plugin-include-dependencies\n\ncustom:\n  cognito:\n    userPoolId: !Ref CognitoUserPool\n    userPoolClientId: !Ref CognitoUserPoolClient",
     "command": [
       "deploy"
     ],
@@ -2282,44 +4716,62 @@
     "serviceProviderAwsCfStackName": "master-g-api-dev",
     "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-south-1:724390852787:stack/master-g-api-dev/926fd020-0024-11f1-b6c7-068dd5a3b74f",
     "serviceProviderAwsCfStackCreated": "2026-02-02T10:47:30.170Z",
-    "serviceProviderAwsCfStackUpdated": "2026-02-02T10:56:45.522Z",
+    "serviceProviderAwsCfStackUpdated": "2026-02-03T06:51:22.329Z",
     "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
         "OutputKey": "SignInLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-signIn:18",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-signIn:23",
         "Description": "Current Lambda function version",
         "ExportName": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
       },
       {
+        "OutputKey": "ConfirmSignUpLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-confirmSignUp:2",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-master-g-api-dev-ConfirmSignUpLambdaFunctionQualifiedArn"
+      },
+      {
         "OutputKey": "GetTasksLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-getTasks:39",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-getTasks:44",
         "Description": "Current Lambda function version",
         "ExportName": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
       },
       {
+        "OutputKey": "ResendConfirmationCodeLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-resendConfirmationCode:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-master-g-api-dev-ResendConfirmationCodeLambdaFunctionQualifiedArn"
+      },
+      {
         "OutputKey": "UpdateTaskLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-updateTask:39",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-updateTask:44",
         "Description": "Current Lambda function version",
         "ExportName": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "CreateTaskLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-createTask:39",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-createTask:44",
         "Description": "Current Lambda function version",
         "ExportName": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
       },
       {
-        "OutputKey": "TokenAuthrizerLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-tokenAuthrizer:30",
+        "OutputKey": "RefreshTokenLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-refreshToken:4",
         "Description": "Current Lambda function version",
-        "ExportName": "sls-master-g-api-dev-TokenAuthrizerLambdaFunctionQualifiedArn"
+        "ExportName": "sls-master-g-api-dev-RefreshTokenLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "SignUpLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-signUp:18",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-signUp:23",
         "Description": "Current Lambda function version",
         "ExportName": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "TokenAuthrizerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:724390852787:function:master-g-api-dev-tokenAuthrizer:35",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-master-g-api-dev-TokenAuthrizerLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "HttpApiId",
@@ -2376,6 +4828,44 @@
           "Type": "AWS::Logs::LogGroup",
           "Properties": {
             "LogGroupName": "/aws/lambda/master-g-api-dev-signIn",
+            "RetentionInDays": 1
+          }
+        },
+        "RefreshTokenLogGroup": "<REDACTED>",
+        "ConfirmSignUpLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-confirmSignUp",
+            "RetentionInDays": 1
+          }
+        },
+        "ResendConfirmationCodeLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-resendConfirmationCode",
+            "RetentionInDays": 1
+          }
+        },
+        "AdminConfirmUserLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-adminConfirmUser",
+            "RetentionInDays": 1
+          }
+        },
+        "ForgotPasswordLogGroup": "<REDACTED>",
+        "ResetPasswordLogGroup": "<REDACTED>",
+        "ListCognitoUsersLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-listCognitoUsers",
+            "RetentionInDays": 1
+          }
+        },
+        "DeleteAuthUserLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/master-g-api-dev-deleteAuthUser",
             "RetentionInDays": 1
           }
         },
@@ -2479,7 +4969,7 @@
           "Properties": {
             "Code": {
               "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-              "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
             },
             "Handler": "src/handlers/getTask.handler",
             "Runtime": "nodejs18.x",
@@ -2513,7 +5003,7 @@
           "Properties": {
             "Code": {
               "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-              "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
             },
             "Handler": "src/handlers/createTask.handler",
             "Runtime": "nodejs18.x",
@@ -2547,7 +5037,7 @@
           "Properties": {
             "Code": {
               "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-              "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
             },
             "Handler": "src/handlers/updateTask.handler",
             "Runtime": "nodejs18.x",
@@ -2581,7 +5071,7 @@
           "Properties": {
             "Code": {
               "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-              "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
             },
             "Handler": "src/handlers/auth.signUp",
             "Runtime": "nodejs18.x",
@@ -2615,7 +5105,7 @@
           "Properties": {
             "Code": {
               "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-              "S3Key": "serverless/master-g-api/dev/1770030003334-2026-02-02T11:00:03.334Z/master-g-api.zip"
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
             },
             "Handler": "src/handlers/auth.signIn",
             "Runtime": "nodejs18.x",
@@ -2644,55 +5134,299 @@
             "SignInLogGroup"
           ]
         },
-        "TokenAuthrizerLambdaVersionhfzSdpIRFekWdiSghsDdZKb7fMJcbaJ40KrNTNKRO8A": "<REDACTED>",
-        "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU": {
+        "RefreshTokenLambdaFunction": "<REDACTED>",
+        "ConfirmSignUpLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/auth.confirmSignUp",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-confirmSignUp",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "ConfirmSignUpIamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "ConfirmSignUpIamRoleLambdaExecution",
+            "ConfirmSignUpLogGroup"
+          ]
+        },
+        "ResendConfirmationCodeLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/auth.resendConfirmationCode",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-resendConfirmationCode",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "ResendConfirmationCodeIamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "ResendConfirmationCodeIamRoleLambdaExecution",
+            "ResendConfirmationCodeLogGroup"
+          ]
+        },
+        "AdminConfirmUserLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/auth.adminConfirmUser",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-adminConfirmUser",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                },
+                "USER_POOL_ID": {
+                  "Ref": "CognitoUserPool"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "AdminConfirmUserIamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "AdminConfirmUserIamRoleLambdaExecution",
+            "AdminConfirmUserLogGroup"
+          ]
+        },
+        "ForgotPasswordLambdaFunction": "<REDACTED>",
+        "ResetPasswordLambdaFunction": "<REDACTED>",
+        "ListCognitoUsersLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/auth.listCognitoUsers",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-listCognitoUsers",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Description": "List all onboarded users from Cognito User Pool",
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                },
+                "USER_POOL_ID": {
+                  "Ref": "CognitoUserPool"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "ListCognitoUsersIamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "ListCognitoUsersIamRoleLambdaExecution",
+            "ListCognitoUsersLogGroup"
+          ]
+        },
+        "DeleteAuthUserLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+              "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+            },
+            "Handler": "src/handlers/auth.deleteUser",
+            "Runtime": "nodejs18.x",
+            "FunctionName": "master-g-api-dev-deleteAuthUser",
+            "MemorySize": 128,
+            "Timeout": 6,
+            "Description": "Delete a user completely from Cognito User Pool",
+            "Environment": {
+              "Variables": {
+                "TASKS_TABLE": {
+                  "Ref": "TasksTable"
+                },
+                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                "COGNITO_CLIENT_ID": {
+                  "Ref": "CognitoUserPoolClient"
+                },
+                "USER_POOL_ID": {
+                  "Ref": "CognitoUserPool"
+                }
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "DeleteAuthUserIamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "DeleteAuthUserIamRoleLambdaExecution",
+            "DeleteAuthUserLogGroup"
+          ]
+        },
+        "TokenAuthrizerLambdaVersiontNfeP2SCB9uKwGLkzeacuFHKxsMGXlv2KceAQb6365I": "<REDACTED>",
+        "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k": {
           "Type": "AWS::Lambda::Version",
           "DeletionPolicy": "Retain",
           "Properties": {
             "FunctionName": {
               "Ref": "GetTasksLambdaFunction"
             },
-            "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
           }
         },
-        "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE": {
+        "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc": {
           "Type": "AWS::Lambda::Version",
           "DeletionPolicy": "Retain",
           "Properties": {
             "FunctionName": {
               "Ref": "CreateTaskLambdaFunction"
             },
-            "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
           }
         },
-        "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE": {
+        "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ": {
           "Type": "AWS::Lambda::Version",
           "DeletionPolicy": "Retain",
           "Properties": {
             "FunctionName": {
               "Ref": "UpdateTaskLambdaFunction"
             },
-            "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
           }
         },
-        "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww": {
+        "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw": {
           "Type": "AWS::Lambda::Version",
           "DeletionPolicy": "Retain",
           "Properties": {
             "FunctionName": {
               "Ref": "SignUpLambdaFunction"
             },
-            "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
           }
         },
-        "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU": {
+        "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno": {
           "Type": "AWS::Lambda::Version",
           "DeletionPolicy": "Retain",
           "Properties": {
             "FunctionName": {
               "Ref": "SignInLambdaFunction"
             },
-            "CodeSha256": "8q/Mi2XKBo4tozS6MsHFMxpBAMVftDjQ/V3n1za7nXQ="
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+          }
+        },
+        "RefreshTokenLambdaVersionK505zLzIreIsA8KgBd5Rk1sAV7yPV2NrzxiMhpoTk": "<REDACTED>",
+        "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "ConfirmSignUpLambdaFunction"
+            },
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+          }
+        },
+        "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "ResendConfirmationCodeLambdaFunction"
+            },
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+          }
+        },
+        "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "AdminConfirmUserLambdaFunction"
+            },
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+          }
+        },
+        "ForgotPasswordLambdaVersion5hzZxs7CPgyME131uQaBFNakJDdeZ0X5qO02aCNQ7fo": "<REDACTED>",
+        "ResetPasswordLambdaVersion1B3ENKM3U1mLGSvrQxm2XFmcobP6dj74zOtlsvuI8": "<REDACTED>",
+        "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "ListCognitoUsersLambdaFunction"
+            },
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY=",
+            "Description": "List all onboarded users from Cognito User Pool"
+          }
+        },
+        "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "DeleteAuthUserLambdaFunction"
+            },
+            "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY=",
+            "Description": "Delete a user completely from Cognito User Pool"
           }
         },
         "HttpApi": {
@@ -3135,6 +5869,798 @@
           },
           "DependsOn": "HttpApiIntegrationSignIn"
         },
+        "RefreshTokenLambdaPermissionHttpApi": "<REDACTED>",
+        "HttpApiIntegrationRefreshToken": "<REDACTED>",
+        "HttpApiRoutePostAuthRefreshDashtoken": "<REDACTED>",
+        "ConfirmSignUpLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "ConfirmSignUpLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationConfirmSignUp": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "ConfirmSignUpLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRoutePostAuthConfirm": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "POST /auth/confirm",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationConfirmSignUp"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationConfirmSignUp"
+        },
+        "ResendConfirmationCodeLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "ResendConfirmationCodeLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationResendConfirmationCode": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "ResendConfirmationCodeLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRoutePostAuthResendDashcode": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "POST /auth/resend-code",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationResendConfirmationCode"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationResendConfirmationCode"
+        },
+        "AdminConfirmUserLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "AdminConfirmUserLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationAdminConfirmUser": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "AdminConfirmUserLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRoutePostAuthAdminDashconfirm": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "POST /auth/admin-confirm",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationAdminConfirmUser"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationAdminConfirmUser"
+        },
+        "ForgotPasswordLambdaPermissionHttpApi": "<REDACTED>",
+        "HttpApiIntegrationForgotPassword": "<REDACTED>",
+        "HttpApiRoutePostAuthForgotDashpassword": "<REDACTED>",
+        "ResetPasswordLambdaPermissionHttpApi": "<REDACTED>",
+        "HttpApiIntegrationResetPassword": "<REDACTED>",
+        "HttpApiRoutePostAuthResetDashpassword": "<REDACTED>",
+        "ListCognitoUsersLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "ListCognitoUsersLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationListCognitoUsers": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "ListCognitoUsersLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRouteGetAuthUsers": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "GET /auth/users",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationListCognitoUsers"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationListCognitoUsers"
+        },
+        "DeleteAuthUserLambdaPermissionHttpApi": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "DeleteAuthUserLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "HttpApi"
+                  },
+                  "/*"
+                ]
+              ]
+            }
+          }
+        },
+        "HttpApiIntegrationDeleteAuthUser": {
+          "Type": "AWS::ApiGatewayV2::Integration",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "IntegrationType": "AWS_PROXY",
+            "IntegrationUri": {
+              "Fn::GetAtt": [
+                "DeleteAuthUserLambdaFunction",
+                "Arn"
+              ]
+            },
+            "PayloadFormatVersion": "2.0",
+            "TimeoutInMillis": 30000
+          }
+        },
+        "HttpApiRouteDeleteAuthUsersUsernameVar": {
+          "Type": "AWS::ApiGatewayV2::Route",
+          "Properties": {
+            "ApiId": {
+              "Ref": "HttpApi"
+            },
+            "RouteKey": "DELETE /auth/users/{username}",
+            "Target": {
+              "Fn::Join": [
+                "/",
+                [
+                  "integrations",
+                  {
+                    "Ref": "HttpApiIntegrationDeleteAuthUser"
+                  }
+                ]
+              ]
+            }
+          },
+          "DependsOn": "HttpApiIntegrationDeleteAuthUser"
+        },
+        "RefreshTokenIamRoleLambdaExecution": "<REDACTED>",
+        "ConfirmSignUpIamRoleLambdaExecution": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "lambda"
+                    ]
+                  ]
+                },
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-confirmSignUp:*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "cognito-idp:ConfirmSignUp"
+                      ],
+                      "Resource": {
+                        "Fn::GetAtt": [
+                          "CognitoUserPool",
+                          "Arn"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "Path": "/",
+            "RoleName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "confirmSignUp",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  "lambdaRole"
+                ]
+              ]
+            },
+            "ManagedPolicyArns": []
+          }
+        },
+        "ResendConfirmationCodeIamRoleLambdaExecution": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "lambda"
+                    ]
+                  ]
+                },
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-resendConfirmationCode:*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "cognito-idp:ResendConfirmationCode"
+                      ],
+                      "Resource": {
+                        "Fn::GetAtt": [
+                          "CognitoUserPool",
+                          "Arn"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "Path": "/",
+            "RoleName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "resendConfirmationCode",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  "lambdaRole"
+                ]
+              ]
+            },
+            "ManagedPolicyArns": []
+          }
+        },
+        "AdminConfirmUserIamRoleLambdaExecution": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "lambda"
+                    ]
+                  ]
+                },
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-adminConfirmUser:*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "cognito-idp:AdminConfirmSignUp"
+                      ],
+                      "Resource": {
+                        "Fn::GetAtt": [
+                          "CognitoUserPool",
+                          "Arn"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "Path": "/",
+            "RoleName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "adminConfirmUser",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  "lambdaRole"
+                ]
+              ]
+            },
+            "ManagedPolicyArns": []
+          }
+        },
+        "ForgotPasswordIamRoleLambdaExecution": "<REDACTED>",
+        "ResetPasswordIamRoleLambdaExecution": "<REDACTED>",
+        "ListCognitoUsersIamRoleLambdaExecution": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "lambda"
+                    ]
+                  ]
+                },
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-listCognitoUsers:*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "cognito-idp:ListUsers"
+                      ],
+                      "Resource": {
+                        "Fn::GetAtt": [
+                          "CognitoUserPool",
+                          "Arn"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "Path": "/",
+            "RoleName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "listCognitoUsers",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  "lambdaRole"
+                ]
+              ]
+            },
+            "ManagedPolicyArns": []
+          }
+        },
+        "DeleteAuthUserIamRoleLambdaExecution": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "master-g-api",
+                      "dev",
+                      "lambda"
+                    ]
+                  ]
+                },
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-deleteAuthUser:*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "cognito-idp:AdminDeleteUser"
+                      ],
+                      "Resource": {
+                        "Fn::GetAtt": [
+                          "CognitoUserPool",
+                          "Arn"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "Path": "/",
+            "RoleName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "deleteAuthUser",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  "lambdaRole"
+                ]
+              ]
+            },
+            "ManagedPolicyArns": []
+          }
+        },
         "TasksTable": {
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
@@ -3221,7 +6747,7 @@
         "GetTasksLambdaFunctionQualifiedArn": {
           "Description": "Current Lambda function version",
           "Value": {
-            "Ref": "GetTasksLambdaVersionm5XkBOpBZ856pdV3oTkKKE0pBWGHCkoEca5wtzwZDU"
+            "Ref": "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k"
           },
           "Export": {
             "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
@@ -3230,7 +6756,7 @@
         "CreateTaskLambdaFunctionQualifiedArn": {
           "Description": "Current Lambda function version",
           "Value": {
-            "Ref": "CreateTaskLambdaVersionQBMtNaCjiVnVAlsnDDW6w1btlNJjHtB252gkBFwjKSE"
+            "Ref": "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc"
           },
           "Export": {
             "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
@@ -3239,7 +6765,7 @@
         "UpdateTaskLambdaFunctionQualifiedArn": {
           "Description": "Current Lambda function version",
           "Value": {
-            "Ref": "UpdateTaskLambdaVersionKpp9ZTkGVRYpNpgrN8PZ1COdtqAaXRDVJEglR4jP7jE"
+            "Ref": "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ"
           },
           "Export": {
             "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
@@ -3248,7 +6774,7 @@
         "SignUpLambdaFunctionQualifiedArn": {
           "Description": "Current Lambda function version",
           "Value": {
-            "Ref": "SignUpLambdaVersion04Yaupk06cgVqUgcox7OYYIzRG6wyGumnNywEYnww"
+            "Ref": "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw"
           },
           "Export": {
             "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
@@ -3257,10 +6783,58 @@
         "SignInLambdaFunctionQualifiedArn": {
           "Description": "Current Lambda function version",
           "Value": {
-            "Ref": "SignInLambdaVersionyWeNbDWHNZRZ2zszNl6kOyY4XtgLYAGxmqdoOpTCU"
+            "Ref": "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno"
           },
           "Export": {
             "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
+          }
+        },
+        "RefreshTokenLambdaFunctionQualifiedArn": "<REDACTED>",
+        "ConfirmSignUpLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-ConfirmSignUpLambdaFunctionQualifiedArn"
+          }
+        },
+        "ResendConfirmationCodeLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-ResendConfirmationCodeLambdaFunctionQualifiedArn"
+          }
+        },
+        "AdminConfirmUserLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-AdminConfirmUserLambdaFunctionQualifiedArn"
+          }
+        },
+        "ForgotPasswordLambdaFunctionQualifiedArn": "<REDACTED>",
+        "ResetPasswordLambdaFunctionQualifiedArn": "<REDACTED>",
+        "ListCognitoUsersLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-ListCognitoUsersLambdaFunctionQualifiedArn"
+          }
+        },
+        "DeleteAuthUserLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA"
+          },
+          "Export": {
+            "Name": "sls-master-g-api-dev-DeleteAuthUserLambdaFunctionQualifiedArn"
           }
         },
         "HttpApiId": {
