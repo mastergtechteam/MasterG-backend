@@ -17,6 +17,7 @@ provider:
     RETAILER_TABLE: RetailerTable-${self:provider.stage}
     RETAILER_COUNTER_TABLE: RetailerCounters-${self:provider.stage}
     PRODUCTS_TABLE: ProductTable-${self:provider.stage}
+    CATEGORY_TABLE: CategoryTable-${self:provider.stage}
 
   iam:
     role:
@@ -33,10 +34,24 @@ provider:
             - !GetAtt RetailerTable.Arn
             - !GetAtt RetailerCounters.Arn
             - !GetAtt ProductTable.Arn
+            - !GetAtt CategoryTable.Arn
 
             
 
   httpApi:
+    cors:
+        allowedOrigins:
+          - http://localhost:3000
+        allowedHeaders:
+          - Content-Type
+          - Authorization
+        allowedMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowCredentials: false
     authorizers:
       jwtAuthorizer:
         identitySource: $request.header.Authorization
@@ -267,6 +282,46 @@ functions:
           path: /products/{id}
           method: delete
 
+  createCategory:
+    handler: src/handlers/categories/createCategory.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: !GetAtt CategoryTable.Arn
+    events:
+      - httpApi:
+          path: /categories
+          method: post
+
+
+  listCategoriesAdmin:
+    handler: src/handlers/categories/getAllCategories.handler
+    events:
+      - httpApi:
+          path: /categories
+          method: get
+
+  changeStatusCategories:
+    handler: src/handlers/categories/changeStatusCategories.handler
+    events:
+      - httpApi:
+          path: /categories/status/{id}
+          method: put
+
+  updateCategory:
+    handler: src/handlers/categories/updateCategory.handler
+    events:
+      - httpApi:
+          path: /categories/{id}
+          method: put
+
+  deleteCategory:
+    handler: src/handlers/categories/deleteCategory.handler
+    events:
+      - httpApi:
+          path: /categories/{id}
+          method: delete
 
 resources:
   Resources:
@@ -307,6 +362,17 @@ resources:
           - AttributeName: productId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+    CategoryTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: CategoryTable-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: categoryId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: categoryId
+            KeyType: HASH
     
 
 
