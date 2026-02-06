@@ -18,7 +18,10 @@
         "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
         "COGNITO_CLIENT_ID": {
           "Ref": "CognitoUserPoolClient"
-        }
+        },
+        "RETAILER_TABLE": "RetailerTable-dev",
+        "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+        "PRODUCTS_TABLE": "ProductTable-dev"
       },
       "iam": {
         "role": {
@@ -28,12 +31,32 @@
               "Action": [
                 "dynamodb:Scan",
                 "dynamodb:PutItem",
-                "dynamodb:UpdateItem"
+                "dynamodb:UpdateItem",
+                "dynamodb:GetItem",
+                "dynamodb:DeleteItem"
               ],
               "Resource": [
                 {
                   "Fn::GetAtt": [
                     "TasksTable",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "RetailerTable",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "RetailerCounters",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "ProductTable",
                     "Arn"
                   ]
                 }
@@ -171,6 +194,76 @@
               "RetentionInDays": 1
             }
           },
+          "CreateRetailerLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-createRetailer",
+              "RetentionInDays": 1
+            }
+          },
+          "GetRetailerLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-getRetailer",
+              "RetentionInDays": 1
+            }
+          },
+          "UpdateRetailerLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-updateRetailer",
+              "RetentionInDays": 1
+            }
+          },
+          "DeleteRetailerLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-deleteRetailer",
+              "RetentionInDays": 1
+            }
+          },
+          "ListRetailersLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-listRetailers",
+              "RetentionInDays": 1
+            }
+          },
+          "CreateProductLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-createProduct",
+              "RetentionInDays": 1
+            }
+          },
+          "GetProductLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-getProduct",
+              "RetentionInDays": 1
+            }
+          },
+          "ListProductsLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-listProducts",
+              "RetentionInDays": 1
+            }
+          },
+          "UpdateProductLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-updateProduct",
+              "RetentionInDays": 1
+            }
+          },
+          "DeleteProductLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-deleteProduct",
+              "RetentionInDays": 1
+            }
+          },
           "IamRoleLambdaExecution": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -257,7 +350,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/authorizers/tokenAuthorizer.handler",
               "Runtime": "nodejs18.x",
@@ -272,7 +365,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -291,7 +387,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/getTask.handler",
               "Runtime": "nodejs18.x",
@@ -306,7 +402,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -325,7 +424,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/createTask.handler",
               "Runtime": "nodejs18.x",
@@ -340,7 +439,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -359,7 +461,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/updateTask.handler",
               "Runtime": "nodejs18.x",
@@ -374,7 +476,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -393,7 +498,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.signUp",
               "Runtime": "nodejs18.x",
@@ -408,7 +513,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -427,7 +535,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.signIn",
               "Runtime": "nodejs18.x",
@@ -442,7 +550,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -461,7 +572,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.refreshToken",
               "Runtime": "nodejs18.x",
@@ -476,7 +587,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -496,7 +610,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.confirmSignUp",
               "Runtime": "nodejs18.x",
@@ -511,7 +625,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -531,7 +648,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.resendConfirmationCode",
               "Runtime": "nodejs18.x",
@@ -546,7 +663,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -566,7 +686,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.adminConfirmUser",
               "Runtime": "nodejs18.x",
@@ -582,6 +702,9 @@
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
                   },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev",
                   "USER_POOL_ID": {
                     "Ref": "CognitoUserPool"
                   }
@@ -604,7 +727,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.forgotPassword",
               "Runtime": "nodejs18.x",
@@ -619,7 +742,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -639,7 +765,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.resetPassword",
               "Runtime": "nodejs18.x",
@@ -654,7 +780,10 @@
                   "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
-                  }
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
                 }
               },
               "Role": {
@@ -674,7 +803,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.listCognitoUsers",
               "Runtime": "nodejs18.x",
@@ -691,6 +820,9 @@
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
                   },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev",
                   "USER_POOL_ID": {
                     "Ref": "CognitoUserPool"
                   }
@@ -713,7 +845,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.deleteUser",
               "Runtime": "nodejs18.x",
@@ -730,6 +862,9 @@
                   "COGNITO_CLIENT_ID": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
                   },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev",
                   "USER_POOL_ID": {
                     "Ref": "CognitoUserPool"
                   }
@@ -747,146 +882,616 @@
               "DeleteAuthUserLogGroup"
             ]
           },
-          "TokenAuthrizerLambdaVersiontNfeP2SCB9uKwGLkzeacuFHKxsMGXlv2KceAQb6365I": {
+          "CreateRetailerLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/retailers/createRetailer.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-createRetailer",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "CreateRetailerLogGroup"
+            ]
+          },
+          "GetRetailerLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/retailers/getRetailer.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-getRetailer",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetRetailerLogGroup"
+            ]
+          },
+          "UpdateRetailerLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/retailers/updateRetailer.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-updateRetailer",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "UpdateRetailerLogGroup"
+            ]
+          },
+          "DeleteRetailerLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/retailers/deleteRetailer.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-deleteRetailer",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "DeleteRetailerLogGroup"
+            ]
+          },
+          "ListRetailersLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/retailers/listRetailers.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-listRetailers",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "ListRetailersLogGroup"
+            ]
+          },
+          "CreateProductLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/products/createProduct.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-createProduct",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "CreateProductLogGroup"
+            ]
+          },
+          "GetProductLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/products/getProduct.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-getProduct",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetProductLogGroup"
+            ]
+          },
+          "ListProductsLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/products/listProducts.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-listProducts",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "ListProductsLogGroup"
+            ]
+          },
+          "UpdateProductLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/products/updateProduct.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-updateProduct",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "UpdateProductLogGroup"
+            ]
+          },
+          "DeleteProductLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/products/deleteProduct.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-deleteProduct",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "DeleteProductLogGroup"
+            ]
+          },
+          "TokenAuthrizerLambdaVersionBDawrtWsxhEyhGJmPPDEMdzwiVjIVBWKTTrOZwjSA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "TokenAuthrizerLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k": {
+          "GetTasksLambdaVersionAUQhgmS6lEDYlV0bnZQPL0XkmxYATgIKb3UMV2t4Rg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetTasksLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc": {
+          "CreateTaskLambdaVersionUEVz1qsEEHZD1dGZEHuw20N50mcgXbHruuVMHk9h8c": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateTaskLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ": {
+          "UpdateTaskLambdaVersionLaqngrgiEwlrzNTFI6zE0NplbRycPpojKbyhUwt0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UpdateTaskLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw": {
+          "SignUpLambdaVersion9LSSPUvLvWmrDE8BZIrRreLfsRHXNCsf5MtCaZ3kAs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignUpLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno": {
+          "SignInLambdaVersionGQbO3OyY2OIMASv01hhrLmzUTavMftaVohUjWPHgmNE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignInLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "RefreshTokenLambdaVersionK505zLzIreIsA8KgBd5Rk1sAV7yPV2NrzxiMhpoTk": {
+          "RefreshTokenLambdaVersion0BkT4PbTp35SoYtXaxT87pat1WmTr92O6jGk76mns": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "RefreshTokenLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc": {
+          "ConfirmSignUpLambdaVersionnUmz9BXnHMeYnBo9KzxAKUew3UjQkOWg2mX1PhqJ734": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ConfirmSignUpLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k": {
+          "ResendConfirmationCodeLambdaVersionN8wvHrpHpSqddi2OFjHZqKBiZD4Ms7xlVfPILE72c": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ResendConfirmationCodeLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE": {
+          "AdminConfirmUserLambdaVersioniyTqe27Ye7P7QSCslPnfyBhfhQAHnd3IfqBAOFAQ10": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AdminConfirmUserLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "ForgotPasswordLambdaVersion5hzZxs7CPgyME131uQaBFNakJDdeZ0X5qO02aCNQ7fo": {
+          "ForgotPasswordLambdaVersion4FPj0Y0B4KXO4OOlwF7sAHUf6o3h7BJlZtU62P60": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ForgotPasswordLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "ResetPasswordLambdaVersion1B3ENKM3U1mLGSvrQxm2XFmcobP6dj74zOtlsvuI8": {
+          "ResetPasswordLambdaVersionOeyrRdmFvYfPKsZz4gLcj0oI8vIv1wVFblFlZ23QY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ResetPasswordLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY="
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
-          "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU": {
+          "ListCognitoUsersLambdaVersion8oXg22wo24ovSV7kHuLOd8NjVYl63asq3qAMIMqURQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ListCognitoUsersLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY=",
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk=",
               "Description": "List all onboarded users from Cognito User Pool"
             }
           },
-          "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA": {
+          "DeleteAuthUserLambdaVersioniga3dvB9XeandeDh6sZj4fFWGkadj1dVjMiF6Ug6k": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "DeleteAuthUserLambdaFunction"
               },
-              "CodeSha256": "uhAbo6ihYaaV4UTTn5BTkSKy56lBHPlgscDU5YwQofY=",
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk=",
               "Description": "Delete a user completely from Cognito User Pool"
+            }
+          },
+          "CreateRetailerLambdaVersion67WChUqKkBj8kzz8jASXvixegfqPrkfyTwdCYFNXg": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateRetailerLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
+            }
+          },
+          "GetRetailerLambdaVersion9PauffzRcdpf7CgxsyXZB9LQOpU4fZ2SKIyxBTs6RAE": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetRetailerLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
+            }
+          },
+          "UpdateRetailerLambdaVersiony89oe8iEYW6JFdvgmSiOg5n4Kg4TLnc7nur4ypdGmN4": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "UpdateRetailerLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
+            }
+          },
+          "DeleteRetailerLambdaVersionkSF9VwyOKDvSCW2PmWUQ3C6Anb174s3lEEkbaggW3A": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "DeleteRetailerLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
+            }
+          },
+          "ListRetailersLambdaVersionCwbbqbpEuylck6cwxcSWo5OuOgvLLS4ofgvH1NSi3A": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ListRetailersLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
+            }
+          },
+          "CreateProductLambdaVersionDQlleUFDkAp1DAUpd6O7mNRwXmlXkC1Ct5kxeiA8Kc": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateProductLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
+            }
+          },
+          "GetProductLambdaVersion29fJ5ECY8TfSvA3xsfJr5XSfFLe1UejvSocRIdOLvhk": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetProductLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
+            }
+          },
+          "ListProductsLambdaVersion5xB3F8KF0Q8r9XSMTdjcJGrZzm5zyheUIiCzgwID6ok": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ListProductsLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
+            }
+          },
+          "UpdateProductLambdaVersionVDZZ5XqbIoB9IurpKOMz0YCG0PujkbPffYFcBTfqNVA": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "UpdateProductLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
+            }
+          },
+          "DeleteProductLambdaVersionpTxbVEC4qjO6LkAvspl9z7P7JFL3ghSqUsd6TRSAAo": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "DeleteProductLambdaFunction"
+              },
+              "CodeSha256": "6LjNuP/WiXTR1+MUfnN+f+/5LfzOLWZLg/X19B6S0Vk="
             }
           },
           "HttpApi": {
@@ -1880,6 +2485,726 @@
             },
             "DependsOn": "HttpApiIntegrationDeleteAuthUser"
           },
+          "CreateRetailerLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateRetailerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationCreateRetailer": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"CreateRetailerLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePostRetailers": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /retailers",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationCreateRetailer"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationCreateRetailer"
+          },
+          "GetRetailerLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetRetailerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationGetRetailer": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GetRetailerLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteGetRetailersIdVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "GET /retailers/{id}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationGetRetailer"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationGetRetailer"
+          },
+          "UpdateRetailerLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "UpdateRetailerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationUpdateRetailer": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"UpdateRetailerLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePutRetailersIdVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "PUT /retailers/{id}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationUpdateRetailer"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationUpdateRetailer"
+          },
+          "DeleteRetailerLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "DeleteRetailerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationDeleteRetailer": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"DeleteRetailerLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteDeleteRetailersIdVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "DELETE /retailers/{id}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationDeleteRetailer"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationDeleteRetailer"
+          },
+          "ListRetailersLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ListRetailersLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationListRetailers": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"ListRetailersLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteGetRetailers": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "GET /retailers",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationListRetailers"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationListRetailers"
+          },
+          "CreateProductLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateProductLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationCreateProduct": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"CreateProductLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePostProducts": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "POST /products",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationCreateProduct"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationCreateProduct"
+          },
+          "GetProductLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetProductLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationGetProduct": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GetProductLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteGetProductsIdVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "GET /products/{id}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationGetProduct"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationGetProduct"
+          },
+          "ListProductsLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ListProductsLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationListProducts": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"ListProductsLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteGetProducts": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "GET /products",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationListProducts"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationListProducts"
+          },
+          "UpdateProductLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "UpdateProductLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationUpdateProduct": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"UpdateProductLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePutProductsIdVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "PUT /products/{id}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationUpdateProduct"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationUpdateProduct"
+          },
+          "DeleteProductLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "DeleteProductLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationDeleteProduct": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"DeleteProductLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteDeleteProductsIdVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "DELETE /products/{id}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationDeleteProduct"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationDeleteProduct"
+          },
           "RefreshTokenIamRoleLambdaExecution": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -2607,6 +3932,63 @@
                 "Ref": "CognitoUserPool"
               }
             }
+          },
+          "RetailerTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "RetailerTable-dev",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "retailerId",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "retailerId",
+                  "KeyType": "HASH"
+                }
+              ],
+              "BillingMode": "PAY_PER_REQUEST"
+            }
+          },
+          "RetailerCounters": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "RetailerCounters-dev",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "id",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "id",
+                  "KeyType": "HASH"
+                }
+              ],
+              "BillingMode": "PAY_PER_REQUEST"
+            }
+          },
+          "ProductTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "ProductTable-dev",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "productId",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "productId",
+                  "KeyType": "HASH"
+                }
+              ],
+              "BillingMode": "PAY_PER_REQUEST"
+            }
           }
         },
         "Outputs": {
@@ -2619,7 +4001,7 @@
           "TokenAuthrizerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "TokenAuthrizerLambdaVersiontNfeP2SCB9uKwGLkzeacuFHKxsMGXlv2KceAQb6365I"
+              "Ref": "TokenAuthrizerLambdaVersionBDawrtWsxhEyhGJmPPDEMdzwiVjIVBWKTTrOZwjSA"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-TokenAuthrizerLambdaFunctionQualifiedArn"
@@ -2628,7 +4010,7 @@
           "GetTasksLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k"
+              "Ref": "GetTasksLambdaVersionAUQhgmS6lEDYlV0bnZQPL0XkmxYATgIKb3UMV2t4Rg"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
@@ -2637,7 +4019,7 @@
           "CreateTaskLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc"
+              "Ref": "CreateTaskLambdaVersionUEVz1qsEEHZD1dGZEHuw20N50mcgXbHruuVMHk9h8c"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
@@ -2646,7 +4028,7 @@
           "UpdateTaskLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ"
+              "Ref": "UpdateTaskLambdaVersionLaqngrgiEwlrzNTFI6zE0NplbRycPpojKbyhUwt0"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
@@ -2655,7 +4037,7 @@
           "SignUpLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw"
+              "Ref": "SignUpLambdaVersion9LSSPUvLvWmrDE8BZIrRreLfsRHXNCsf5MtCaZ3kAs"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
@@ -2664,7 +4046,7 @@
           "SignInLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno"
+              "Ref": "SignInLambdaVersionGQbO3OyY2OIMASv01hhrLmzUTavMftaVohUjWPHgmNE"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
@@ -2673,7 +4055,7 @@
           "RefreshTokenLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "RefreshTokenLambdaVersionK505zLzIreIsA8KgBd5Rk1sAV7yPV2NrzxiMhpoTk"
+              "Ref": "RefreshTokenLambdaVersion0BkT4PbTp35SoYtXaxT87pat1WmTr92O6jGk76mns"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-RefreshTokenLambdaFunctionQualifiedArn"
@@ -2682,7 +4064,7 @@
           "ConfirmSignUpLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc"
+              "Ref": "ConfirmSignUpLambdaVersionnUmz9BXnHMeYnBo9KzxAKUew3UjQkOWg2mX1PhqJ734"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ConfirmSignUpLambdaFunctionQualifiedArn"
@@ -2691,7 +4073,7 @@
           "ResendConfirmationCodeLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k"
+              "Ref": "ResendConfirmationCodeLambdaVersionN8wvHrpHpSqddi2OFjHZqKBiZD4Ms7xlVfPILE72c"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ResendConfirmationCodeLambdaFunctionQualifiedArn"
@@ -2700,7 +4082,7 @@
           "AdminConfirmUserLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE"
+              "Ref": "AdminConfirmUserLambdaVersioniyTqe27Ye7P7QSCslPnfyBhfhQAHnd3IfqBAOFAQ10"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-AdminConfirmUserLambdaFunctionQualifiedArn"
@@ -2709,7 +4091,7 @@
           "ForgotPasswordLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ForgotPasswordLambdaVersion5hzZxs7CPgyME131uQaBFNakJDdeZ0X5qO02aCNQ7fo"
+              "Ref": "ForgotPasswordLambdaVersion4FPj0Y0B4KXO4OOlwF7sAHUf6o3h7BJlZtU62P60"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ForgotPasswordLambdaFunctionQualifiedArn"
@@ -2718,7 +4100,7 @@
           "ResetPasswordLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ResetPasswordLambdaVersion1B3ENKM3U1mLGSvrQxm2XFmcobP6dj74zOtlsvuI8"
+              "Ref": "ResetPasswordLambdaVersionOeyrRdmFvYfPKsZz4gLcj0oI8vIv1wVFblFlZ23QY"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ResetPasswordLambdaFunctionQualifiedArn"
@@ -2727,7 +4109,7 @@
           "ListCognitoUsersLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU"
+              "Ref": "ListCognitoUsersLambdaVersion8oXg22wo24ovSV7kHuLOd8NjVYl63asq3qAMIMqURQ"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ListCognitoUsersLambdaFunctionQualifiedArn"
@@ -2736,10 +4118,100 @@
           "DeleteAuthUserLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA"
+              "Ref": "DeleteAuthUserLambdaVersioniga3dvB9XeandeDh6sZj4fFWGkadj1dVjMiF6Ug6k"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-DeleteAuthUserLambdaFunctionQualifiedArn"
+            }
+          },
+          "CreateRetailerLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateRetailerLambdaVersion67WChUqKkBj8kzz8jASXvixegfqPrkfyTwdCYFNXg"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-CreateRetailerLambdaFunctionQualifiedArn"
+            }
+          },
+          "GetRetailerLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetRetailerLambdaVersion9PauffzRcdpf7CgxsyXZB9LQOpU4fZ2SKIyxBTs6RAE"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-GetRetailerLambdaFunctionQualifiedArn"
+            }
+          },
+          "UpdateRetailerLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "UpdateRetailerLambdaVersiony89oe8iEYW6JFdvgmSiOg5n4Kg4TLnc7nur4ypdGmN4"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-UpdateRetailerLambdaFunctionQualifiedArn"
+            }
+          },
+          "DeleteRetailerLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "DeleteRetailerLambdaVersionkSF9VwyOKDvSCW2PmWUQ3C6Anb174s3lEEkbaggW3A"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-DeleteRetailerLambdaFunctionQualifiedArn"
+            }
+          },
+          "ListRetailersLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ListRetailersLambdaVersionCwbbqbpEuylck6cwxcSWo5OuOgvLLS4ofgvH1NSi3A"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-ListRetailersLambdaFunctionQualifiedArn"
+            }
+          },
+          "CreateProductLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateProductLambdaVersionDQlleUFDkAp1DAUpd6O7mNRwXmlXkC1Ct5kxeiA8Kc"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-CreateProductLambdaFunctionQualifiedArn"
+            }
+          },
+          "GetProductLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetProductLambdaVersion29fJ5ECY8TfSvA3xsfJr5XSfFLe1UejvSocRIdOLvhk"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-GetProductLambdaFunctionQualifiedArn"
+            }
+          },
+          "ListProductsLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ListProductsLambdaVersion5xB3F8KF0Q8r9XSMTdjcJGrZzm5zyheUIiCzgwID6ok"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-ListProductsLambdaFunctionQualifiedArn"
+            }
+          },
+          "UpdateProductLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "UpdateProductLambdaVersionVDZZ5XqbIoB9IurpKOMz0YCG0PujkbPffYFcBTfqNVA"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-UpdateProductLambdaFunctionQualifiedArn"
+            }
+          },
+          "DeleteProductLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "DeleteProductLambdaVersionpTxbVEC4qjO6LkAvspl9z7P7JFL3ghSqUsd6TRSAAo"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-DeleteProductLambdaFunctionQualifiedArn"
             }
           },
           "HttpApiId": {
@@ -2805,7 +4277,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "TokenAuthrizerLambdaVersiontNfeP2SCB9uKwGLkzeacuFHKxsMGXlv2KceAQb6365I"
+        "versionLogicalId": "TokenAuthrizerLambdaVersionBDawrtWsxhEyhGJmPPDEMdzwiVjIVBWKTTrOZwjSA"
       },
       "getTasks": {
         "handler": "src/handlers/getTask.handler",
@@ -2826,7 +4298,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "GetTasksLambdaVersion0GUHHDTqIG3tQNbOCbt6CLUPXKrHhLyNdDX9IioIH7k"
+        "versionLogicalId": "GetTasksLambdaVersionAUQhgmS6lEDYlV0bnZQPL0XkmxYATgIKb3UMV2t4Rg"
       },
       "createTask": {
         "handler": "src/handlers/createTask.handler",
@@ -2847,7 +4319,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "CreateTaskLambdaVersionYTeWaxv6dcN2nQUJNUSrwd8BVYZ4tfPpUSj77jlv8Oc"
+        "versionLogicalId": "CreateTaskLambdaVersionUEVz1qsEEHZD1dGZEHuw20N50mcgXbHruuVMHk9h8c"
       },
       "updateTask": {
         "handler": "src/handlers/updateTask.handler",
@@ -2868,7 +4340,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "UpdateTaskLambdaVersionrMcI1VfRjr1HBD3U5XarDNNIzWfj4cf2gL6ENUmwQ"
+        "versionLogicalId": "UpdateTaskLambdaVersionLaqngrgiEwlrzNTFI6zE0NplbRycPpojKbyhUwt0"
       },
       "signUp": {
         "handler": "src/handlers/auth.signUp",
@@ -2888,7 +4360,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "SignUpLambdaVersionOG7upjRPg6KVJGOkiFI0W08dPioOaOx25ViGvtmZfw"
+        "versionLogicalId": "SignUpLambdaVersion9LSSPUvLvWmrDE8BZIrRreLfsRHXNCsf5MtCaZ3kAs"
       },
       "signIn": {
         "handler": "src/handlers/auth.signIn",
@@ -2908,7 +4380,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "SignInLambdaVersionqjFha5GiYCs6LxVr4mZqzqxbDfzQbjCcaibdYAlno"
+        "versionLogicalId": "SignInLambdaVersionGQbO3OyY2OIMASv01hhrLmzUTavMftaVohUjWPHgmNE"
       },
       "refreshToken": {
         "handler": "src/handlers/auth.refreshToken",
@@ -2933,7 +4405,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "RefreshTokenLambdaVersionK505zLzIreIsA8KgBd5Rk1sAV7yPV2NrzxiMhpoTk"
+        "versionLogicalId": "RefreshTokenLambdaVersion0BkT4PbTp35SoYtXaxT87pat1WmTr92O6jGk76mns"
       },
       "confirmSignUp": {
         "handler": "src/handlers/auth.confirmSignUp",
@@ -2958,7 +4430,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ConfirmSignUpLambdaVersion3eKjSCCOrqPr2kidI9rqQyl3TDG4EHv1KPuKXUXX0Sc"
+        "versionLogicalId": "ConfirmSignUpLambdaVersionnUmz9BXnHMeYnBo9KzxAKUew3UjQkOWg2mX1PhqJ734"
       },
       "resendConfirmationCode": {
         "handler": "src/handlers/auth.resendConfirmationCode",
@@ -2983,7 +4455,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ResendConfirmationCodeLambdaVersionhyiS5h6A6yaCPmACyLt6z8hgWqri2MRo4pdXtJ5k"
+        "versionLogicalId": "ResendConfirmationCodeLambdaVersionN8wvHrpHpSqddi2OFjHZqKBiZD4Ms7xlVfPILE72c"
       },
       "adminConfirmUser": {
         "handler": "src/handlers/auth.adminConfirmUser",
@@ -3013,7 +4485,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "AdminConfirmUserLambdaVersionqnVrqME0Au2rn0Ecj1wjYyf7a3N0kmBwDjvI60VE"
+        "versionLogicalId": "AdminConfirmUserLambdaVersioniyTqe27Ye7P7QSCslPnfyBhfhQAHnd3IfqBAOFAQ10"
       },
       "forgotPassword": {
         "handler": "src/handlers/auth.forgotPassword",
@@ -3038,7 +4510,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ForgotPasswordLambdaVersion5hzZxs7CPgyME131uQaBFNakJDdeZ0X5qO02aCNQ7fo"
+        "versionLogicalId": "ForgotPasswordLambdaVersion4FPj0Y0B4KXO4OOlwF7sAHUf6o3h7BJlZtU62P60"
       },
       "resetPassword": {
         "handler": "src/handlers/auth.resetPassword",
@@ -3063,7 +4535,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ResetPasswordLambdaVersion1B3ENKM3U1mLGSvrQxm2XFmcobP6dj74zOtlsvuI8"
+        "versionLogicalId": "ResetPasswordLambdaVersionOeyrRdmFvYfPKsZz4gLcj0oI8vIv1wVFblFlZ23QY"
       },
       "listCognitoUsers": {
         "handler": "src/handlers/auth.listCognitoUsers",
@@ -3094,7 +4566,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ListCognitoUsersLambdaVersion1NwTMmI8kWZ8uGkrG1bzSyiLQoLOh0oFrBgAPvNFJU"
+        "versionLogicalId": "ListCognitoUsersLambdaVersion8oXg22wo24ovSV7kHuLOd8NjVYl63asq3qAMIMqURQ"
       },
       "deleteAuthUser": {
         "handler": "src/handlers/auth.deleteUser",
@@ -3125,7 +4597,207 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "DeleteAuthUserLambdaVersion4qLwpvihOyD0rxZ9U0x4nFWZ17r0JcJucp3E7MElWA"
+        "versionLogicalId": "DeleteAuthUserLambdaVersioniga3dvB9XeandeDh6sZj4fFWGkadj1dVjMiF6Ug6k"
+      },
+      "createRetailer": {
+        "handler": "src/handlers/retailers/createRetailer.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/retailers",
+              "method": "post"
+            },
+            "resolvedMethod": "POST",
+            "resolvedPath": "/retailers"
+          }
+        ],
+        "name": "master-g-api-dev-createRetailer",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "CreateRetailerLambdaVersion67WChUqKkBj8kzz8jASXvixegfqPrkfyTwdCYFNXg"
+      },
+      "getRetailer": {
+        "handler": "src/handlers/retailers/getRetailer.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/retailers/{id}",
+              "method": "get"
+            },
+            "resolvedMethod": "GET",
+            "resolvedPath": "/retailers/{id}"
+          }
+        ],
+        "name": "master-g-api-dev-getRetailer",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "GetRetailerLambdaVersion9PauffzRcdpf7CgxsyXZB9LQOpU4fZ2SKIyxBTs6RAE"
+      },
+      "updateRetailer": {
+        "handler": "src/handlers/retailers/updateRetailer.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/retailers/{id}",
+              "method": "put"
+            },
+            "resolvedMethod": "PUT",
+            "resolvedPath": "/retailers/{id}"
+          }
+        ],
+        "name": "master-g-api-dev-updateRetailer",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "UpdateRetailerLambdaVersiony89oe8iEYW6JFdvgmSiOg5n4Kg4TLnc7nur4ypdGmN4"
+      },
+      "deleteRetailer": {
+        "handler": "src/handlers/retailers/deleteRetailer.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/retailers/{id}",
+              "method": "delete"
+            },
+            "resolvedMethod": "DELETE",
+            "resolvedPath": "/retailers/{id}"
+          }
+        ],
+        "name": "master-g-api-dev-deleteRetailer",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "DeleteRetailerLambdaVersionkSF9VwyOKDvSCW2PmWUQ3C6Anb174s3lEEkbaggW3A"
+      },
+      "listRetailers": {
+        "handler": "src/handlers/retailers/listRetailers.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/retailers",
+              "method": "get"
+            },
+            "resolvedMethod": "GET",
+            "resolvedPath": "/retailers"
+          }
+        ],
+        "name": "master-g-api-dev-listRetailers",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "ListRetailersLambdaVersionCwbbqbpEuylck6cwxcSWo5OuOgvLLS4ofgvH1NSi3A"
+      },
+      "createProduct": {
+        "handler": "src/handlers/products/createProduct.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/products",
+              "method": "post"
+            },
+            "resolvedMethod": "POST",
+            "resolvedPath": "/products"
+          }
+        ],
+        "name": "master-g-api-dev-createProduct",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "CreateProductLambdaVersionDQlleUFDkAp1DAUpd6O7mNRwXmlXkC1Ct5kxeiA8Kc"
+      },
+      "getProduct": {
+        "handler": "src/handlers/products/getProduct.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/products/{id}",
+              "method": "get"
+            },
+            "resolvedMethod": "GET",
+            "resolvedPath": "/products/{id}"
+          }
+        ],
+        "name": "master-g-api-dev-getProduct",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "GetProductLambdaVersion29fJ5ECY8TfSvA3xsfJr5XSfFLe1UejvSocRIdOLvhk"
+      },
+      "listProducts": {
+        "handler": "src/handlers/products/listProducts.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/products",
+              "method": "get"
+            },
+            "resolvedMethod": "GET",
+            "resolvedPath": "/products"
+          }
+        ],
+        "name": "master-g-api-dev-listProducts",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "ListProductsLambdaVersion5xB3F8KF0Q8r9XSMTdjcJGrZzm5zyheUIiCzgwID6ok"
+      },
+      "updateProduct": {
+        "handler": "src/handlers/products/updateProduct.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/products/{id}",
+              "method": "put"
+            },
+            "resolvedMethod": "PUT",
+            "resolvedPath": "/products/{id}"
+          }
+        ],
+        "name": "master-g-api-dev-updateProduct",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "UpdateProductLambdaVersionVDZZ5XqbIoB9IurpKOMz0YCG0PujkbPffYFcBTfqNVA"
+      },
+      "deleteProduct": {
+        "handler": "src/handlers/products/deleteProduct.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/products/{id}",
+              "method": "delete"
+            },
+            "resolvedMethod": "DELETE",
+            "resolvedPath": "/products/{id}"
+          }
+        ],
+        "name": "master-g-api-dev-deleteProduct",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "DeleteProductLambdaVersionpTxbVEC4qjO6LkAvspl9z7P7JFL3ghSqUsd6TRSAAo"
       }
     },
     "resources": {
@@ -3209,6 +4881,63 @@
               "Ref": "CognitoUserPool"
             }
           }
+        },
+        "RetailerTable": {
+          "Type": "AWS::DynamoDB::Table",
+          "Properties": {
+            "TableName": "RetailerTable-dev",
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "retailerId",
+                "AttributeType": "S"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "retailerId",
+                "KeyType": "HASH"
+              }
+            ],
+            "BillingMode": "PAY_PER_REQUEST"
+          }
+        },
+        "RetailerCounters": {
+          "Type": "AWS::DynamoDB::Table",
+          "Properties": {
+            "TableName": "RetailerCounters-dev",
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "id",
+                "AttributeType": "S"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "id",
+                "KeyType": "HASH"
+              }
+            ],
+            "BillingMode": "PAY_PER_REQUEST"
+          }
+        },
+        "ProductTable": {
+          "Type": "AWS::DynamoDB::Table",
+          "Properties": {
+            "TableName": "ProductTable-dev",
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "productId",
+                "AttributeType": "S"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "productId",
+                "KeyType": "HASH"
+              }
+            ],
+            "BillingMode": "PAY_PER_REQUEST"
+          }
         }
       },
       "Outputs": {}
@@ -3240,7 +4969,7 @@
     "artifact": "/Applications/MAMP/htdocs/MasterG/node-express-mongodb/.serverless/master-g-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/master-g-api/dev/1770102392477-2026-02-03T07:06:32.477Z",
+    "artifactDirectoryName": "serverless/master-g-api/dev/1770217938578-2026-02-04T15:12:18.578Z",
     "artifact": "master-g-api.zip"
   }
 }
