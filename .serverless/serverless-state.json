@@ -30,11 +30,13 @@
             {
               "Effect": "Allow",
               "Action": [
+                "dynamodb:Query",
                 "dynamodb:Scan",
                 "dynamodb:PutItem",
                 "dynamodb:UpdateItem",
                 "dynamodb:GetItem",
-                "dynamodb:DeleteItem"
+                "dynamodb:DeleteItem",
+                "dynamodb:BatchGetItem"
               ],
               "Resource": [
                 {
@@ -66,6 +68,9 @@
                     "CategoryTable",
                     "Arn"
                   ]
+                },
+                {
+                  "Fn::Sub": "${ProductTable.Arn}/index/*"
                 }
               ]
             }
@@ -85,6 +90,7 @@
             "GET",
             "POST",
             "PUT",
+            "PATCH",
             "DELETE",
             "OPTIONS"
           ],
@@ -288,6 +294,13 @@
               "RetentionInDays": 1
             }
           },
+          "ChangeProductStatusLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/master-g-api-dev-changeProductStatus",
+              "RetentionInDays": 1
+            }
+          },
           "CreateCategoryLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
@@ -409,7 +422,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/authorizers/tokenAuthorizer.handler",
               "Runtime": "nodejs18.x",
@@ -447,7 +460,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/getTask.handler",
               "Runtime": "nodejs18.x",
@@ -485,7 +498,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/createTask.handler",
               "Runtime": "nodejs18.x",
@@ -523,7 +536,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/updateTask.handler",
               "Runtime": "nodejs18.x",
@@ -561,7 +574,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.signUp",
               "Runtime": "nodejs18.x",
@@ -599,7 +612,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.signIn",
               "Runtime": "nodejs18.x",
@@ -637,7 +650,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.refreshToken",
               "Runtime": "nodejs18.x",
@@ -676,7 +689,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.confirmSignUp",
               "Runtime": "nodejs18.x",
@@ -715,7 +728,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.resendConfirmationCode",
               "Runtime": "nodejs18.x",
@@ -754,7 +767,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.adminConfirmUser",
               "Runtime": "nodejs18.x",
@@ -796,7 +809,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.forgotPassword",
               "Runtime": "nodejs18.x",
@@ -835,7 +848,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.resetPassword",
               "Runtime": "nodejs18.x",
@@ -874,7 +887,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.listCognitoUsers",
               "Runtime": "nodejs18.x",
@@ -917,7 +930,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/auth.deleteUser",
               "Runtime": "nodejs18.x",
@@ -960,7 +973,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/retailers/createRetailer.handler",
               "Runtime": "nodejs18.x",
@@ -998,7 +1011,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/retailers/getRetailer.handler",
               "Runtime": "nodejs18.x",
@@ -1036,7 +1049,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/retailers/updateRetailer.handler",
               "Runtime": "nodejs18.x",
@@ -1074,7 +1087,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/retailers/deleteRetailer.handler",
               "Runtime": "nodejs18.x",
@@ -1112,7 +1125,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/retailers/listRetailers.handler",
               "Runtime": "nodejs18.x",
@@ -1150,7 +1163,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/products/createProduct.handler",
               "Runtime": "nodejs18.x",
@@ -1188,7 +1201,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/products/getProduct.handler",
               "Runtime": "nodejs18.x",
@@ -1226,7 +1239,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/products/listProducts.handler",
               "Runtime": "nodejs18.x",
@@ -1264,7 +1277,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/products/updateProduct.handler",
               "Runtime": "nodejs18.x",
@@ -1302,7 +1315,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/products/deleteProduct.handler",
               "Runtime": "nodejs18.x",
@@ -1335,12 +1348,50 @@
               "DeleteProductLogGroup"
             ]
           },
+          "ChangeProductStatusLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
+              },
+              "Handler": "src/handlers/products/changeProductStatus.handler",
+              "Runtime": "nodejs18.x",
+              "FunctionName": "master-g-api-dev-changeProductStatus",
+              "MemorySize": 128,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TASKS_TABLE": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TASKS_TABLE\"]"
+                  },
+                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+                  "COGNITO_CLIENT_ID": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"COGNITO_CLIENT_ID\"]"
+                  },
+                  "RETAILER_TABLE": "RetailerTable-dev",
+                  "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+                  "PRODUCTS_TABLE": "ProductTable-dev",
+                  "CATEGORY_TABLE": "CategoryTable-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "ChangeProductStatusLogGroup"
+            ]
+          },
           "CreateCategoryLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/categories/createCategory.handler",
               "Runtime": "nodejs18.x",
@@ -1379,7 +1430,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/categories/getAllCategories.handler",
               "Runtime": "nodejs18.x",
@@ -1417,7 +1468,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/categories/changeStatusCategories.handler",
               "Runtime": "nodejs18.x",
@@ -1455,7 +1506,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/categories/updateCategory.handler",
               "Runtime": "nodejs18.x",
@@ -1493,7 +1544,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-                "S3Key": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z/master-g-api.zip"
+                "S3Key": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z/master-g-api.zip"
               },
               "Handler": "src/handlers/categories/deleteCategory.handler",
               "Runtime": "nodejs18.x",
@@ -1526,296 +1577,306 @@
               "DeleteCategoryLogGroup"
             ]
           },
-          "TokenAuthrizerLambdaVersionaHrSRBwewlUr4YZrioEVxgMIKQij2Ck8o29oVbuo1Q": {
+          "TokenAuthrizerLambdaVersionID6mI6DKAaS1crWrmqVAZtKSmDHsP6ImKsaHosRw": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "TokenAuthrizerLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "GetTasksLambdaVersionWOuOjwlvZEqo9UxZWzLhZQ0dJImAJlP8JvarKrG2Q": {
+          "GetTasksLambdaVersion9xgQCYJ6hkimSeQpdVFrnwyzwGNxQthjzPx4YmJLKfg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetTasksLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "CreateTaskLambdaVersionjMxZHjGlzwSaCof0CNrG9Acr2zcKniZp2rFw4YJ0I": {
+          "CreateTaskLambdaVersionwuq9WAC35nK8biT7xRzBROOZPlRxoN8eYUikKmGxLQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateTaskLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "UpdateTaskLambdaVersionajbpfLS8ycHDEDzuAcD8XHpMmjRrPCJrfLGQG6Kfgr8": {
+          "UpdateTaskLambdaVersionjliYv68t2kEzFUfxc1l2ZDwYWxrEnDQIJPtaASoOYQw": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UpdateTaskLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "SignUpLambdaVersionjAgokqNQmsZzXSDOin1vXsvtOY9aR9KisNTFEQnraA": {
+          "SignUpLambdaVersion4M6iYF09eplDaKvDBzD1t50K89BQLXTRtbfpSMJnc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignUpLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "SignInLambdaVersiongyUKyNjcofbg3N8ovKhaBWGUHeVc2c3ZxIKVIrtKXRc": {
+          "SignInLambdaVersionkTygZAl6HexX21F3Ig1IfGTvAqqnqija3f0OYZxFMug": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignInLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "RefreshTokenLambdaVersionEc8facVozujxceXUp7XvocE4oyxCy0KwG1iG1BOE": {
+          "RefreshTokenLambdaVersionS6uYzxkw7NUDctWrhHwtlVmLg01lHxhtj49wv4Y": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "RefreshTokenLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "ConfirmSignUpLambdaVersionb5yo03npaB5t8FqnhkUjEz7uoo7mpseqVM7q0MMAakc": {
+          "ConfirmSignUpLambdaVersionMRNJP8WTdaiiw8YpD23ukhikO0ojjjmRVkEyw2Kuso": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ConfirmSignUpLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "ResendConfirmationCodeLambdaVersionLv5hxUrPQRnr9QHQxZb9f1VqreustAimjUHdc7qcQ": {
+          "ResendConfirmationCodeLambdaVersionJMHH8LMmDevq51X2qte2wTvh52969yby2OrgNpKV9Qs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ResendConfirmationCodeLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "AdminConfirmUserLambdaVersionP5C49Mf6f6FD75JeIl7SHA6wPXNrAEm2keXQOqHPqHQ": {
+          "AdminConfirmUserLambdaVersionPgRCPtHlMGlLJwM22Lt9O0VdjLXpedob1s9y9Kwx8g": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AdminConfirmUserLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "ForgotPasswordLambdaVersion31sqrfjzxA4bHdGcxxocco8K4Tk1Lax2D7iLPJbAlJs": {
+          "ForgotPasswordLambdaVersionE6Oiz8BhWycHHM9pk0APrfjF8a2DYr1Y88dMkOHA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ForgotPasswordLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "ResetPasswordLambdaVersionmXvBlP0EVV13cmPCzzsusChMOYhOYtgPgE73KKyF7no": {
+          "ResetPasswordLambdaVersionFbkFWqRvkYsmptsJjK5kypztmZOK458Qgm3fYeIco": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ResetPasswordLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "ListCognitoUsersLambdaVersionPW9VJulcRIFOuFTpzSMp65zYeTERZ0kWSKWy3b30Q": {
+          "ListCognitoUsersLambdaVersioniPX3tmpHcGtgcWsn03L81DGwRDZ3Vv6QT9Z8CG6Vr4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ListCognitoUsersLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q=",
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48=",
               "Description": "List all onboarded users from Cognito User Pool"
             }
           },
-          "DeleteAuthUserLambdaVersionWwHk44egHQqjr6aK5fA02MTW0NCSv2uyPcVexBqJoco": {
+          "DeleteAuthUserLambdaVersionY3h80YGCiqhXWPyhY1cepY9CavAfczhJqZEIJAg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "DeleteAuthUserLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q=",
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48=",
               "Description": "Delete a user completely from Cognito User Pool"
             }
           },
-          "CreateRetailerLambdaVersion3fZKUvRz2gav10g7vd0doEDIf0EkfqrhiBSUZISpNxs": {
+          "CreateRetailerLambdaVersionViVngxbHFDZ7FOWpKyTgBxPMt8a2zAGPO4Wb8F1m9s": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateRetailerLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "GetRetailerLambdaVersionHMrDqhVW6B3E4V1J6ZAfx4Mpmc81s03jYkcBvQr03M": {
+          "GetRetailerLambdaVersionre0OpUDGI7l0SIQuS3m1edDBDqZWNd3aPOiwGa5vBFI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetRetailerLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "UpdateRetailerLambdaVersionakdbEE4x4Dc5F2qYFoKlsmdD0uVbmXZfMJZhVwsJ40": {
+          "UpdateRetailerLambdaVersionJ9j6YKTnhFuQWyhMJfb55n1vO0QINy0xPVrtKY24": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UpdateRetailerLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "DeleteRetailerLambdaVersionAfDRA5eEFR6HJslKHGu5cztRuq6rXSl6bhcBh5Psho": {
+          "DeleteRetailerLambdaVersion8mgKPzLG1HADMC44MaUe3xoG4eQCUI1SsEExpo2lLY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "DeleteRetailerLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "ListRetailersLambdaVersionYcqpyzFDxWobBmol6N7LvAwfvLd5yobwtxsFrSGNE8": {
+          "ListRetailersLambdaVersionqSmo81LJuAlfYTPGoEIB2HIIIVJNc0gzveQZ0SsSI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ListRetailersLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "CreateProductLambdaVersionlvcOoSxYJWs3Mpzj7BSYBYkAJ7tWyyxGrYSoiPlync": {
+          "CreateProductLambdaVersionlF0ljJ02pwfJXLyVG1LUDOqRlsIdktLJPZLj7ctAqE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateProductLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "GetProductLambdaVersionS24Dqe93HBxcw8fht9OsMhuDE5447K9DYaLVecm4": {
+          "GetProductLambdaVersioniN4JTbjkLU2RKCaGdA2HDUQf44YP9jQEfkW1v1WJg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetProductLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "ListProductsLambdaVersiontboq2LI1hI34WJYjzQdtat7BCtopYjlzJHiWfu2ZU": {
+          "ListProductsLambdaVersionAr4N60ZtevfnE13LBUwFHAWbdhJhMgbVY6yBsQh4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ListProductsLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "UpdateProductLambdaVersionG85kyPXxqPS9rvzndsD7YKAfojAcHvuNcDBzYJaM8": {
+          "UpdateProductLambdaVersionSpgDHxXyPWCxqe8Fa2MzHyqeOUnUoWnPy6k1HPepM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UpdateProductLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "DeleteProductLambdaVersionbYiFivx7tHcRZkb5O7LV94ytWVce6oujyaTmUOBfU": {
+          "DeleteProductLambdaVersionum74h558x5UYjMaUpaGENqeOZNf3UKnOmtior1RsrZE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "DeleteProductLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "CreateCategoryLambdaVersion3lCapsp0NbdGg76IhS0tYVLrs3OYf6kYQO1ePVDBRCs": {
+          "ChangeProductStatusLambdaVersiongZwMtb5KqZ1TK40ZhOo4SVFiPPipU4mv4UxcMGoc": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ChangeProductStatusLambdaFunction"
+              },
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
+            }
+          },
+          "CreateCategoryLambdaVersionzdoDJKigz5E1N42exQtStIVLiPG6Q0Y3wQgLJIec": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateCategoryLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "ListCategoriesAdminLambdaVersionJlGcnxeCwLjMVWyxf19Y6PQDj76ltBNMFuaDjfLUY": {
+          "ListCategoriesAdminLambdaVersion5bswz8xoraNa9dgmPYKvwE1Nu7qz7rSAdXJOeqnLOA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ListCategoriesAdminLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "ChangeStatusCategoriesLambdaVersion3rMOrIy4CiMTcMITcd97qI1Rr9sE8UpMB5W9BmnD0": {
+          "ChangeStatusCategoriesLambdaVersiono52uQQ49fBdlv5NU5k6w2hi1KQPqAHYWoNcvN0TQ4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ChangeStatusCategoriesLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "UpdateCategoryLambdaVersionfBUXDiXNPT970xaFNnOPUsgD32AVTlEUnKJXIGzM": {
+          "UpdateCategoryLambdaVersionSBq2M2SbyRyrQhYQMVbEr9vc2PNYUP7SbZsqIXRoE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UpdateCategoryLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
-          "DeleteCategoryLambdaVersionKeXVUR93qD1x5LSLh7YyIiAIowUCW3QAMP6nNfw6iXM": {
+          "DeleteCategoryLambdaVersiondUTV471S3qlIsrkEG6tZ1F4tYQhu7HZHowZtWgMdnbk": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "DeleteCategoryLambdaFunction"
               },
-              "CodeSha256": "RE4SQZxlEQ5Y7g11dUzCBSN4T58nDheP/NvyFKwTv9Q="
+              "CodeSha256": "GSuyumhNSRmXl+7rAI4VIGo1jn/gy0nxAMz5kLFxq48="
             }
           },
           "HttpApi": {
@@ -1832,6 +1893,7 @@
                   "GET",
                   "POST",
                   "PUT",
+                  "PATCH",
                   "DELETE",
                   "OPTIONS"
                 ],
@@ -3545,6 +3607,78 @@
             },
             "DependsOn": "HttpApiIntegrationDeleteProduct"
           },
+          "ChangeProductStatusLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ChangeProductStatusLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationChangeProductStatus": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"ChangeProductStatusLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRoutePatchProductsStatusIdVar": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "PATCH /products/status/{id}",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationChangeProductStatus"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationChangeProductStatus"
+          },
           "CreateCategoryLambdaPermissionHttpApi": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
@@ -4756,9 +4890,18 @@
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
               "TableName": "ProductTable-dev",
+              "BillingMode": "PAY_PER_REQUEST",
               "AttributeDefinitions": [
                 {
                   "AttributeName": "productId",
+                  "AttributeType": "S"
+                },
+                {
+                  "AttributeName": "categoryId",
+                  "AttributeType": "S"
+                },
+                {
+                  "AttributeName": "createdAt",
                   "AttributeType": "S"
                 }
               ],
@@ -4768,7 +4911,24 @@
                   "KeyType": "HASH"
                 }
               ],
-              "BillingMode": "PAY_PER_REQUEST"
+              "GlobalSecondaryIndexes": [
+                {
+                  "IndexName": "categoryId-createdAt-index",
+                  "KeySchema": [
+                    {
+                      "AttributeName": "categoryId",
+                      "KeyType": "HASH"
+                    },
+                    {
+                      "AttributeName": "createdAt",
+                      "KeyType": "RANGE"
+                    }
+                  ],
+                  "Projection": {
+                    "ProjectionType": "ALL"
+                  }
+                }
+              ]
             }
           },
           "CategoryTable": {
@@ -4801,7 +4961,7 @@
           "TokenAuthrizerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "TokenAuthrizerLambdaVersionaHrSRBwewlUr4YZrioEVxgMIKQij2Ck8o29oVbuo1Q"
+              "Ref": "TokenAuthrizerLambdaVersionID6mI6DKAaS1crWrmqVAZtKSmDHsP6ImKsaHosRw"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-TokenAuthrizerLambdaFunctionQualifiedArn"
@@ -4810,7 +4970,7 @@
           "GetTasksLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetTasksLambdaVersionWOuOjwlvZEqo9UxZWzLhZQ0dJImAJlP8JvarKrG2Q"
+              "Ref": "GetTasksLambdaVersion9xgQCYJ6hkimSeQpdVFrnwyzwGNxQthjzPx4YmJLKfg"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
@@ -4819,7 +4979,7 @@
           "CreateTaskLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateTaskLambdaVersionjMxZHjGlzwSaCof0CNrG9Acr2zcKniZp2rFw4YJ0I"
+              "Ref": "CreateTaskLambdaVersionwuq9WAC35nK8biT7xRzBROOZPlRxoN8eYUikKmGxLQ"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
@@ -4828,7 +4988,7 @@
           "UpdateTaskLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UpdateTaskLambdaVersionajbpfLS8ycHDEDzuAcD8XHpMmjRrPCJrfLGQG6Kfgr8"
+              "Ref": "UpdateTaskLambdaVersionjliYv68t2kEzFUfxc1l2ZDwYWxrEnDQIJPtaASoOYQw"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
@@ -4837,7 +4997,7 @@
           "SignUpLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignUpLambdaVersionjAgokqNQmsZzXSDOin1vXsvtOY9aR9KisNTFEQnraA"
+              "Ref": "SignUpLambdaVersion4M6iYF09eplDaKvDBzD1t50K89BQLXTRtbfpSMJnc"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
@@ -4846,7 +5006,7 @@
           "SignInLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignInLambdaVersiongyUKyNjcofbg3N8ovKhaBWGUHeVc2c3ZxIKVIrtKXRc"
+              "Ref": "SignInLambdaVersionkTygZAl6HexX21F3Ig1IfGTvAqqnqija3f0OYZxFMug"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
@@ -4855,7 +5015,7 @@
           "RefreshTokenLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "RefreshTokenLambdaVersionEc8facVozujxceXUp7XvocE4oyxCy0KwG1iG1BOE"
+              "Ref": "RefreshTokenLambdaVersionS6uYzxkw7NUDctWrhHwtlVmLg01lHxhtj49wv4Y"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-RefreshTokenLambdaFunctionQualifiedArn"
@@ -4864,7 +5024,7 @@
           "ConfirmSignUpLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ConfirmSignUpLambdaVersionb5yo03npaB5t8FqnhkUjEz7uoo7mpseqVM7q0MMAakc"
+              "Ref": "ConfirmSignUpLambdaVersionMRNJP8WTdaiiw8YpD23ukhikO0ojjjmRVkEyw2Kuso"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ConfirmSignUpLambdaFunctionQualifiedArn"
@@ -4873,7 +5033,7 @@
           "ResendConfirmationCodeLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ResendConfirmationCodeLambdaVersionLv5hxUrPQRnr9QHQxZb9f1VqreustAimjUHdc7qcQ"
+              "Ref": "ResendConfirmationCodeLambdaVersionJMHH8LMmDevq51X2qte2wTvh52969yby2OrgNpKV9Qs"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ResendConfirmationCodeLambdaFunctionQualifiedArn"
@@ -4882,7 +5042,7 @@
           "AdminConfirmUserLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AdminConfirmUserLambdaVersionP5C49Mf6f6FD75JeIl7SHA6wPXNrAEm2keXQOqHPqHQ"
+              "Ref": "AdminConfirmUserLambdaVersionPgRCPtHlMGlLJwM22Lt9O0VdjLXpedob1s9y9Kwx8g"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-AdminConfirmUserLambdaFunctionQualifiedArn"
@@ -4891,7 +5051,7 @@
           "ForgotPasswordLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ForgotPasswordLambdaVersion31sqrfjzxA4bHdGcxxocco8K4Tk1Lax2D7iLPJbAlJs"
+              "Ref": "ForgotPasswordLambdaVersionE6Oiz8BhWycHHM9pk0APrfjF8a2DYr1Y88dMkOHA"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ForgotPasswordLambdaFunctionQualifiedArn"
@@ -4900,7 +5060,7 @@
           "ResetPasswordLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ResetPasswordLambdaVersionmXvBlP0EVV13cmPCzzsusChMOYhOYtgPgE73KKyF7no"
+              "Ref": "ResetPasswordLambdaVersionFbkFWqRvkYsmptsJjK5kypztmZOK458Qgm3fYeIco"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ResetPasswordLambdaFunctionQualifiedArn"
@@ -4909,7 +5069,7 @@
           "ListCognitoUsersLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ListCognitoUsersLambdaVersionPW9VJulcRIFOuFTpzSMp65zYeTERZ0kWSKWy3b30Q"
+              "Ref": "ListCognitoUsersLambdaVersioniPX3tmpHcGtgcWsn03L81DGwRDZ3Vv6QT9Z8CG6Vr4"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ListCognitoUsersLambdaFunctionQualifiedArn"
@@ -4918,7 +5078,7 @@
           "DeleteAuthUserLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "DeleteAuthUserLambdaVersionWwHk44egHQqjr6aK5fA02MTW0NCSv2uyPcVexBqJoco"
+              "Ref": "DeleteAuthUserLambdaVersionY3h80YGCiqhXWPyhY1cepY9CavAfczhJqZEIJAg"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-DeleteAuthUserLambdaFunctionQualifiedArn"
@@ -4927,7 +5087,7 @@
           "CreateRetailerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateRetailerLambdaVersion3fZKUvRz2gav10g7vd0doEDIf0EkfqrhiBSUZISpNxs"
+              "Ref": "CreateRetailerLambdaVersionViVngxbHFDZ7FOWpKyTgBxPMt8a2zAGPO4Wb8F1m9s"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-CreateRetailerLambdaFunctionQualifiedArn"
@@ -4936,7 +5096,7 @@
           "GetRetailerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetRetailerLambdaVersionHMrDqhVW6B3E4V1J6ZAfx4Mpmc81s03jYkcBvQr03M"
+              "Ref": "GetRetailerLambdaVersionre0OpUDGI7l0SIQuS3m1edDBDqZWNd3aPOiwGa5vBFI"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-GetRetailerLambdaFunctionQualifiedArn"
@@ -4945,7 +5105,7 @@
           "UpdateRetailerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UpdateRetailerLambdaVersionakdbEE4x4Dc5F2qYFoKlsmdD0uVbmXZfMJZhVwsJ40"
+              "Ref": "UpdateRetailerLambdaVersionJ9j6YKTnhFuQWyhMJfb55n1vO0QINy0xPVrtKY24"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-UpdateRetailerLambdaFunctionQualifiedArn"
@@ -4954,7 +5114,7 @@
           "DeleteRetailerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "DeleteRetailerLambdaVersionAfDRA5eEFR6HJslKHGu5cztRuq6rXSl6bhcBh5Psho"
+              "Ref": "DeleteRetailerLambdaVersion8mgKPzLG1HADMC44MaUe3xoG4eQCUI1SsEExpo2lLY"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-DeleteRetailerLambdaFunctionQualifiedArn"
@@ -4963,7 +5123,7 @@
           "ListRetailersLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ListRetailersLambdaVersionYcqpyzFDxWobBmol6N7LvAwfvLd5yobwtxsFrSGNE8"
+              "Ref": "ListRetailersLambdaVersionqSmo81LJuAlfYTPGoEIB2HIIIVJNc0gzveQZ0SsSI"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ListRetailersLambdaFunctionQualifiedArn"
@@ -4972,7 +5132,7 @@
           "CreateProductLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateProductLambdaVersionlvcOoSxYJWs3Mpzj7BSYBYkAJ7tWyyxGrYSoiPlync"
+              "Ref": "CreateProductLambdaVersionlF0ljJ02pwfJXLyVG1LUDOqRlsIdktLJPZLj7ctAqE"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-CreateProductLambdaFunctionQualifiedArn"
@@ -4981,7 +5141,7 @@
           "GetProductLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetProductLambdaVersionS24Dqe93HBxcw8fht9OsMhuDE5447K9DYaLVecm4"
+              "Ref": "GetProductLambdaVersioniN4JTbjkLU2RKCaGdA2HDUQf44YP9jQEfkW1v1WJg"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-GetProductLambdaFunctionQualifiedArn"
@@ -4990,7 +5150,7 @@
           "ListProductsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ListProductsLambdaVersiontboq2LI1hI34WJYjzQdtat7BCtopYjlzJHiWfu2ZU"
+              "Ref": "ListProductsLambdaVersionAr4N60ZtevfnE13LBUwFHAWbdhJhMgbVY6yBsQh4"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ListProductsLambdaFunctionQualifiedArn"
@@ -4999,7 +5159,7 @@
           "UpdateProductLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UpdateProductLambdaVersionG85kyPXxqPS9rvzndsD7YKAfojAcHvuNcDBzYJaM8"
+              "Ref": "UpdateProductLambdaVersionSpgDHxXyPWCxqe8Fa2MzHyqeOUnUoWnPy6k1HPepM"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-UpdateProductLambdaFunctionQualifiedArn"
@@ -5008,16 +5168,25 @@
           "DeleteProductLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "DeleteProductLambdaVersionbYiFivx7tHcRZkb5O7LV94ytWVce6oujyaTmUOBfU"
+              "Ref": "DeleteProductLambdaVersionum74h558x5UYjMaUpaGENqeOZNf3UKnOmtior1RsrZE"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-DeleteProductLambdaFunctionQualifiedArn"
             }
           },
+          "ChangeProductStatusLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ChangeProductStatusLambdaVersiongZwMtb5KqZ1TK40ZhOo4SVFiPPipU4mv4UxcMGoc"
+            },
+            "Export": {
+              "Name": "sls-master-g-api-dev-ChangeProductStatusLambdaFunctionQualifiedArn"
+            }
+          },
           "CreateCategoryLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateCategoryLambdaVersion3lCapsp0NbdGg76IhS0tYVLrs3OYf6kYQO1ePVDBRCs"
+              "Ref": "CreateCategoryLambdaVersionzdoDJKigz5E1N42exQtStIVLiPG6Q0Y3wQgLJIec"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-CreateCategoryLambdaFunctionQualifiedArn"
@@ -5026,7 +5195,7 @@
           "ListCategoriesAdminLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ListCategoriesAdminLambdaVersionJlGcnxeCwLjMVWyxf19Y6PQDj76ltBNMFuaDjfLUY"
+              "Ref": "ListCategoriesAdminLambdaVersion5bswz8xoraNa9dgmPYKvwE1Nu7qz7rSAdXJOeqnLOA"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ListCategoriesAdminLambdaFunctionQualifiedArn"
@@ -5035,7 +5204,7 @@
           "ChangeStatusCategoriesLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ChangeStatusCategoriesLambdaVersion3rMOrIy4CiMTcMITcd97qI1Rr9sE8UpMB5W9BmnD0"
+              "Ref": "ChangeStatusCategoriesLambdaVersiono52uQQ49fBdlv5NU5k6w2hi1KQPqAHYWoNcvN0TQ4"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-ChangeStatusCategoriesLambdaFunctionQualifiedArn"
@@ -5044,7 +5213,7 @@
           "UpdateCategoryLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UpdateCategoryLambdaVersionfBUXDiXNPT970xaFNnOPUsgD32AVTlEUnKJXIGzM"
+              "Ref": "UpdateCategoryLambdaVersionSBq2M2SbyRyrQhYQMVbEr9vc2PNYUP7SbZsqIXRoE"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-UpdateCategoryLambdaFunctionQualifiedArn"
@@ -5053,7 +5222,7 @@
           "DeleteCategoryLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "DeleteCategoryLambdaVersionKeXVUR93qD1x5LSLh7YyIiAIowUCW3QAMP6nNfw6iXM"
+              "Ref": "DeleteCategoryLambdaVersiondUTV471S3qlIsrkEG6tZ1F4tYQhu7HZHowZtWgMdnbk"
             },
             "Export": {
               "Name": "sls-master-g-api-dev-DeleteCategoryLambdaFunctionQualifiedArn"
@@ -5122,7 +5291,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "TokenAuthrizerLambdaVersionaHrSRBwewlUr4YZrioEVxgMIKQij2Ck8o29oVbuo1Q"
+        "versionLogicalId": "TokenAuthrizerLambdaVersionID6mI6DKAaS1crWrmqVAZtKSmDHsP6ImKsaHosRw"
       },
       "getTasks": {
         "handler": "src/handlers/getTask.handler",
@@ -5143,7 +5312,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "GetTasksLambdaVersionWOuOjwlvZEqo9UxZWzLhZQ0dJImAJlP8JvarKrG2Q"
+        "versionLogicalId": "GetTasksLambdaVersion9xgQCYJ6hkimSeQpdVFrnwyzwGNxQthjzPx4YmJLKfg"
       },
       "createTask": {
         "handler": "src/handlers/createTask.handler",
@@ -5164,7 +5333,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "CreateTaskLambdaVersionjMxZHjGlzwSaCof0CNrG9Acr2zcKniZp2rFw4YJ0I"
+        "versionLogicalId": "CreateTaskLambdaVersionwuq9WAC35nK8biT7xRzBROOZPlRxoN8eYUikKmGxLQ"
       },
       "updateTask": {
         "handler": "src/handlers/updateTask.handler",
@@ -5185,7 +5354,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "UpdateTaskLambdaVersionajbpfLS8ycHDEDzuAcD8XHpMmjRrPCJrfLGQG6Kfgr8"
+        "versionLogicalId": "UpdateTaskLambdaVersionjliYv68t2kEzFUfxc1l2ZDwYWxrEnDQIJPtaASoOYQw"
       },
       "signUp": {
         "handler": "src/handlers/auth.signUp",
@@ -5205,7 +5374,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "SignUpLambdaVersionjAgokqNQmsZzXSDOin1vXsvtOY9aR9KisNTFEQnraA"
+        "versionLogicalId": "SignUpLambdaVersion4M6iYF09eplDaKvDBzD1t50K89BQLXTRtbfpSMJnc"
       },
       "signIn": {
         "handler": "src/handlers/auth.signIn",
@@ -5225,7 +5394,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "SignInLambdaVersiongyUKyNjcofbg3N8ovKhaBWGUHeVc2c3ZxIKVIrtKXRc"
+        "versionLogicalId": "SignInLambdaVersionkTygZAl6HexX21F3Ig1IfGTvAqqnqija3f0OYZxFMug"
       },
       "refreshToken": {
         "handler": "src/handlers/auth.refreshToken",
@@ -5250,7 +5419,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "RefreshTokenLambdaVersionEc8facVozujxceXUp7XvocE4oyxCy0KwG1iG1BOE"
+        "versionLogicalId": "RefreshTokenLambdaVersionS6uYzxkw7NUDctWrhHwtlVmLg01lHxhtj49wv4Y"
       },
       "confirmSignUp": {
         "handler": "src/handlers/auth.confirmSignUp",
@@ -5275,7 +5444,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ConfirmSignUpLambdaVersionb5yo03npaB5t8FqnhkUjEz7uoo7mpseqVM7q0MMAakc"
+        "versionLogicalId": "ConfirmSignUpLambdaVersionMRNJP8WTdaiiw8YpD23ukhikO0ojjjmRVkEyw2Kuso"
       },
       "resendConfirmationCode": {
         "handler": "src/handlers/auth.resendConfirmationCode",
@@ -5300,7 +5469,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ResendConfirmationCodeLambdaVersionLv5hxUrPQRnr9QHQxZb9f1VqreustAimjUHdc7qcQ"
+        "versionLogicalId": "ResendConfirmationCodeLambdaVersionJMHH8LMmDevq51X2qte2wTvh52969yby2OrgNpKV9Qs"
       },
       "adminConfirmUser": {
         "handler": "src/handlers/auth.adminConfirmUser",
@@ -5330,7 +5499,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "AdminConfirmUserLambdaVersionP5C49Mf6f6FD75JeIl7SHA6wPXNrAEm2keXQOqHPqHQ"
+        "versionLogicalId": "AdminConfirmUserLambdaVersionPgRCPtHlMGlLJwM22Lt9O0VdjLXpedob1s9y9Kwx8g"
       },
       "forgotPassword": {
         "handler": "src/handlers/auth.forgotPassword",
@@ -5355,7 +5524,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ForgotPasswordLambdaVersion31sqrfjzxA4bHdGcxxocco8K4Tk1Lax2D7iLPJbAlJs"
+        "versionLogicalId": "ForgotPasswordLambdaVersionE6Oiz8BhWycHHM9pk0APrfjF8a2DYr1Y88dMkOHA"
       },
       "resetPassword": {
         "handler": "src/handlers/auth.resetPassword",
@@ -5380,7 +5549,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ResetPasswordLambdaVersionmXvBlP0EVV13cmPCzzsusChMOYhOYtgPgE73KKyF7no"
+        "versionLogicalId": "ResetPasswordLambdaVersionFbkFWqRvkYsmptsJjK5kypztmZOK458Qgm3fYeIco"
       },
       "listCognitoUsers": {
         "handler": "src/handlers/auth.listCognitoUsers",
@@ -5411,7 +5580,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ListCognitoUsersLambdaVersionPW9VJulcRIFOuFTpzSMp65zYeTERZ0kWSKWy3b30Q"
+        "versionLogicalId": "ListCognitoUsersLambdaVersioniPX3tmpHcGtgcWsn03L81DGwRDZ3Vv6QT9Z8CG6Vr4"
       },
       "deleteAuthUser": {
         "handler": "src/handlers/auth.deleteUser",
@@ -5442,7 +5611,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "DeleteAuthUserLambdaVersionWwHk44egHQqjr6aK5fA02MTW0NCSv2uyPcVexBqJoco"
+        "versionLogicalId": "DeleteAuthUserLambdaVersionY3h80YGCiqhXWPyhY1cepY9CavAfczhJqZEIJAg"
       },
       "createRetailer": {
         "handler": "src/handlers/retailers/createRetailer.handler",
@@ -5462,7 +5631,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "CreateRetailerLambdaVersion3fZKUvRz2gav10g7vd0doEDIf0EkfqrhiBSUZISpNxs"
+        "versionLogicalId": "CreateRetailerLambdaVersionViVngxbHFDZ7FOWpKyTgBxPMt8a2zAGPO4Wb8F1m9s"
       },
       "getRetailer": {
         "handler": "src/handlers/retailers/getRetailer.handler",
@@ -5482,7 +5651,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "GetRetailerLambdaVersionHMrDqhVW6B3E4V1J6ZAfx4Mpmc81s03jYkcBvQr03M"
+        "versionLogicalId": "GetRetailerLambdaVersionre0OpUDGI7l0SIQuS3m1edDBDqZWNd3aPOiwGa5vBFI"
       },
       "updateRetailer": {
         "handler": "src/handlers/retailers/updateRetailer.handler",
@@ -5502,7 +5671,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "UpdateRetailerLambdaVersionakdbEE4x4Dc5F2qYFoKlsmdD0uVbmXZfMJZhVwsJ40"
+        "versionLogicalId": "UpdateRetailerLambdaVersionJ9j6YKTnhFuQWyhMJfb55n1vO0QINy0xPVrtKY24"
       },
       "deleteRetailer": {
         "handler": "src/handlers/retailers/deleteRetailer.handler",
@@ -5522,7 +5691,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "DeleteRetailerLambdaVersionAfDRA5eEFR6HJslKHGu5cztRuq6rXSl6bhcBh5Psho"
+        "versionLogicalId": "DeleteRetailerLambdaVersion8mgKPzLG1HADMC44MaUe3xoG4eQCUI1SsEExpo2lLY"
       },
       "listRetailers": {
         "handler": "src/handlers/retailers/listRetailers.handler",
@@ -5542,7 +5711,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ListRetailersLambdaVersionYcqpyzFDxWobBmol6N7LvAwfvLd5yobwtxsFrSGNE8"
+        "versionLogicalId": "ListRetailersLambdaVersionqSmo81LJuAlfYTPGoEIB2HIIIVJNc0gzveQZ0SsSI"
       },
       "createProduct": {
         "handler": "src/handlers/products/createProduct.handler",
@@ -5562,7 +5731,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "CreateProductLambdaVersionlvcOoSxYJWs3Mpzj7BSYBYkAJ7tWyyxGrYSoiPlync"
+        "versionLogicalId": "CreateProductLambdaVersionlF0ljJ02pwfJXLyVG1LUDOqRlsIdktLJPZLj7ctAqE"
       },
       "getProduct": {
         "handler": "src/handlers/products/getProduct.handler",
@@ -5582,7 +5751,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "GetProductLambdaVersionS24Dqe93HBxcw8fht9OsMhuDE5447K9DYaLVecm4"
+        "versionLogicalId": "GetProductLambdaVersioniN4JTbjkLU2RKCaGdA2HDUQf44YP9jQEfkW1v1WJg"
       },
       "listProducts": {
         "handler": "src/handlers/products/listProducts.handler",
@@ -5602,7 +5771,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ListProductsLambdaVersiontboq2LI1hI34WJYjzQdtat7BCtopYjlzJHiWfu2ZU"
+        "versionLogicalId": "ListProductsLambdaVersionAr4N60ZtevfnE13LBUwFHAWbdhJhMgbVY6yBsQh4"
       },
       "updateProduct": {
         "handler": "src/handlers/products/updateProduct.handler",
@@ -5622,7 +5791,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "UpdateProductLambdaVersionG85kyPXxqPS9rvzndsD7YKAfojAcHvuNcDBzYJaM8"
+        "versionLogicalId": "UpdateProductLambdaVersionSpgDHxXyPWCxqe8Fa2MzHyqeOUnUoWnPy6k1HPepM"
       },
       "deleteProduct": {
         "handler": "src/handlers/products/deleteProduct.handler",
@@ -5642,7 +5811,27 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "DeleteProductLambdaVersionbYiFivx7tHcRZkb5O7LV94ytWVce6oujyaTmUOBfU"
+        "versionLogicalId": "DeleteProductLambdaVersionum74h558x5UYjMaUpaGENqeOZNf3UKnOmtior1RsrZE"
+      },
+      "changeProductStatus": {
+        "handler": "src/handlers/products/changeProductStatus.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/products/status/{id}",
+              "method": "patch"
+            },
+            "resolvedMethod": "PATCH",
+            "resolvedPath": "/products/status/{id}"
+          }
+        ],
+        "name": "master-g-api-dev-changeProductStatus",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs18.x",
+        "vpc": {},
+        "versionLogicalId": "ChangeProductStatusLambdaVersiongZwMtb5KqZ1TK40ZhOo4SVFiPPipU4mv4UxcMGoc"
       },
       "createCategory": {
         "handler": "src/handlers/categories/createCategory.handler",
@@ -5667,7 +5856,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "CreateCategoryLambdaVersion3lCapsp0NbdGg76IhS0tYVLrs3OYf6kYQO1ePVDBRCs"
+        "versionLogicalId": "CreateCategoryLambdaVersionzdoDJKigz5E1N42exQtStIVLiPG6Q0Y3wQgLJIec"
       },
       "listCategoriesAdmin": {
         "handler": "src/handlers/categories/getAllCategories.handler",
@@ -5687,7 +5876,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ListCategoriesAdminLambdaVersionJlGcnxeCwLjMVWyxf19Y6PQDj76ltBNMFuaDjfLUY"
+        "versionLogicalId": "ListCategoriesAdminLambdaVersion5bswz8xoraNa9dgmPYKvwE1Nu7qz7rSAdXJOeqnLOA"
       },
       "changeStatusCategories": {
         "handler": "src/handlers/categories/changeStatusCategories.handler",
@@ -5707,7 +5896,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "ChangeStatusCategoriesLambdaVersion3rMOrIy4CiMTcMITcd97qI1Rr9sE8UpMB5W9BmnD0"
+        "versionLogicalId": "ChangeStatusCategoriesLambdaVersiono52uQQ49fBdlv5NU5k6w2hi1KQPqAHYWoNcvN0TQ4"
       },
       "updateCategory": {
         "handler": "src/handlers/categories/updateCategory.handler",
@@ -5727,7 +5916,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "UpdateCategoryLambdaVersionfBUXDiXNPT970xaFNnOPUsgD32AVTlEUnKJXIGzM"
+        "versionLogicalId": "UpdateCategoryLambdaVersionSBq2M2SbyRyrQhYQMVbEr9vc2PNYUP7SbZsqIXRoE"
       },
       "deleteCategory": {
         "handler": "src/handlers/categories/deleteCategory.handler",
@@ -5747,7 +5936,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "DeleteCategoryLambdaVersionKeXVUR93qD1x5LSLh7YyIiAIowUCW3QAMP6nNfw6iXM"
+        "versionLogicalId": "DeleteCategoryLambdaVersiondUTV471S3qlIsrkEG6tZ1F4tYQhu7HZHowZtWgMdnbk"
       }
     },
     "resources": {
@@ -5874,9 +6063,18 @@
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
             "TableName": "ProductTable-dev",
+            "BillingMode": "PAY_PER_REQUEST",
             "AttributeDefinitions": [
               {
                 "AttributeName": "productId",
+                "AttributeType": "S"
+              },
+              {
+                "AttributeName": "categoryId",
+                "AttributeType": "S"
+              },
+              {
+                "AttributeName": "createdAt",
                 "AttributeType": "S"
               }
             ],
@@ -5886,7 +6084,24 @@
                 "KeyType": "HASH"
               }
             ],
-            "BillingMode": "PAY_PER_REQUEST"
+            "GlobalSecondaryIndexes": [
+              {
+                "IndexName": "categoryId-createdAt-index",
+                "KeySchema": [
+                  {
+                    "AttributeName": "categoryId",
+                    "KeyType": "HASH"
+                  },
+                  {
+                    "AttributeName": "createdAt",
+                    "KeyType": "RANGE"
+                  }
+                ],
+                "Projection": {
+                  "ProjectionType": "ALL"
+                }
+              }
+            ]
           }
         },
         "CategoryTable": {
@@ -5938,7 +6153,7 @@
     "artifact": "/Applications/MAMP/htdocs/MasterG/node-express-mongodb/.serverless/master-g-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/master-g-api/dev/1770312300894-2026-02-05T17:25:00.894Z",
+    "artifactDirectoryName": "serverless/master-g-api/dev/1770495054820-2026-02-07T20:10:54.820Z",
     "artifact": "master-g-api.zip"
   }
 }

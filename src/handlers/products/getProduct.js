@@ -1,23 +1,26 @@
-import AWS from 'aws-sdk';
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+import AWS from 'aws-sdk'
+const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
 export const handler = async (event) => {
   try {
-    const { id } = event.pathParameters;
+    const { id } = event.pathParameters
 
     const result = await dynamoDb.get({
       TableName: process.env.PRODUCTS_TABLE,
       Key: { productId: id }
-    }).promise();
+    }).promise()
 
     if (!result.Item) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ success: false, message: "Product not found" })
-      };
+        body: JSON.stringify({
+          success: false,
+          message: "Product not found"
+        })
+      }
     }
 
-    const p = result.Item;
+    const p = result.Item
 
     return {
       statusCode: 200,
@@ -26,22 +29,52 @@ export const handler = async (event) => {
         message: "Product fetched successfully",
         data: {
           productId: p.productId,
-          name: p.name,
-          brand: p.brand,
-          category: p.category,
-          sellingPrice: p.pricing?.sellingPrice || null,
-          availableQuantity: p.stock?.availableQuantity || null,
-          unit: p.quantity?.unit || null,
-          status: p.status
+          name: p.name || null,
+          brand: p.brand || null,
+          description: p.description || null,
+
+          category: p.category || {
+            categoryId: p.categoryId || null,
+            name: p.categoryName || null
+          },
+
+          pricing: {
+            mrp: p.pricing?.mrp || null,
+            sellingPrice: p.pricing?.sellingPrice || null,
+            currency: p.pricing?.currency || "INR"
+          },
+
+          quantity: p.quantity || null,
+          stock: p.stock || null,
+          tax: p.tax || null,
+          productType: p.productType || null,
+          expiry: p.expiry || null,
+
+          manufacturingDetails: {
+            manufacturer: p.manufacturingDetails?.manufacturer || null,
+            countryOfOrigin: p.manufacturingDetails?.countryOfOrigin || null
+          },
+
+          barcode: p.barcode || null,
+          images: p.images || [],
+
+          status: p.status || "INACTIVE",
+
+          createdAt: p.createdAt || null,
+          updatedAt: p.updatedAt || null,
+          isDeleted: p.isDeleted || false
         }
       })
-    };
+    }
 
   } catch (err) {
-    console.error("GET PRODUCT ERROR:", err);
+    console.error("GET PRODUCT ERROR:", err)
     return {
       statusCode: 500,
-      body: JSON.stringify({ success: false, error: err.message })
-    };
+      body: JSON.stringify({
+        success: false,
+        error: err.message
+      })
+    }
   }
-};
+}

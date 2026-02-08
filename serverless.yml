@@ -24,17 +24,22 @@ provider:
       statements:
         - Effect: Allow
           Action:
+            - dynamodb:Query
             - dynamodb:Scan
             - dynamodb:PutItem
             - dynamodb:UpdateItem
             - dynamodb:GetItem
             - dynamodb:DeleteItem
+            - dynamodb:BatchGetItem 
           Resource: 
             - !GetAtt TasksTable.Arn
             - !GetAtt RetailerTable.Arn
             - !GetAtt RetailerCounters.Arn
             - !GetAtt ProductTable.Arn
             - !GetAtt CategoryTable.Arn
+
+            #ADD THIS FOR GSI
+            - !Sub "${ProductTable.Arn}/index/*"
 
             
 
@@ -49,6 +54,7 @@ provider:
           - GET
           - POST
           - PUT
+          - PATCH
           - DELETE
           - OPTIONS
         allowCredentials: false
@@ -282,6 +288,13 @@ functions:
           path: /products/{id}
           method: delete
 
+  changeProductStatus:
+    handler: src/handlers/products/changeProductStatus.handler
+    events:
+      - httpApi:
+          path: /products/status/{id}
+          method: patch
+
   createCategory:
     handler: src/handlers/categories/createCategory.handler
     iamRoleStatements:
@@ -355,13 +368,30 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ProductTable-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+
         AttributeDefinitions:
           - AttributeName: productId
             AttributeType: S
+          - AttributeName: categoryId
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+
         KeySchema:
           - AttributeName: productId
             KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
+
+        GlobalSecondaryIndexes:
+          - IndexName: categoryId-createdAt-index
+            KeySchema:
+              - AttributeName: categoryId
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+
     CategoryTable:
       Type: AWS::DynamoDB::Table
       Properties:

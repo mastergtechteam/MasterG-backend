@@ -1,10 +1,11 @@
-import AWS from 'aws-sdk';
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+import AWS from 'aws-sdk'
+const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
 export const handler = async (event) => {
   try {
-    const { id } = event.pathParameters;
-    const data = JSON.parse(event.body);
+    const { id } = event.pathParameters
+    const data = JSON.parse(event.body)
+    const now = new Date().toISOString()
 
     const params = {
       TableName: process.env.PRODUCTS_TABLE,
@@ -13,7 +14,7 @@ export const handler = async (event) => {
         SET #name = :name,
             brand = :brand,
             category = :category,
-            subCategory = :subCategory,
+            categoryId = :categoryId,
             description = :description,
             pricing = :pricing,
             quantity = :quantity,
@@ -30,26 +31,29 @@ export const handler = async (event) => {
         "#name": "name"
       },
       ExpressionAttributeValues: {
-        ":name": data.name,
-        ":brand": data.brand,
-        ":category": data.category,
-        ":subCategory": data.subCategory,
-        ":description": data.description,
-        ":pricing": data.pricing,
-        ":quantity": data.quantity,
-        ":stock": data.stock,
-        ":tax": data.tax,
-        ":productType": data.productType,
-        ":expiry": data.expiry,
-        ":manufacturingDetails": data.manufacturingDetails,
-        ":barcode": data.barcode,
-        ":images": data.images,
-        ":updatedAt": new Date().toISOString()
+        ":name": data.name || "",
+        ":brand": data.brand || "",
+        ":category": {
+          categoryId: data.categoryId,
+          name: data.categoryName
+        },
+        ":categoryId": data.categoryId,
+        ":description": data.description || "",
+        ":pricing": data.pricing || {},
+        ":quantity": data.quantity || 1,
+        ":stock": data.stock || 0,
+        ":tax": data.tax || 0,
+        ":productType": data.productType || "GROCERY",
+        ":expiry": data.expiry || null,
+        ":manufacturingDetails": data.manufacturingDetails || {},
+        ":barcode": data.barcode || "",
+        ":images": data.images || [],
+        ":updatedAt": now
       },
       ReturnValues: "ALL_NEW"
-    };
+    }
 
-    const result = await dynamoDb.update(params).promise();
+    const result = await dynamoDb.update(params).promise()
 
     return {
       statusCode: 200,
@@ -58,13 +62,13 @@ export const handler = async (event) => {
         message: "Product updated successfully",
         data: result.Attributes
       })
-    };
+    }
 
   } catch (error) {
-    console.error("Update product error:", error);
+    console.error("Update product error:", error)
     return {
       statusCode: 500,
-      body: JSON.stringify({ success: false, message: "Error updating product", error: error.message })
-    };
+      body: JSON.stringify({ success: false, message: error.message })
+    }
   }
-};
+}
