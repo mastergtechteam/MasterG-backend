@@ -18,6 +18,8 @@ provider:
     RETAILER_COUNTER_TABLE: RetailerCounters-${self:provider.stage}
     PRODUCTS_TABLE: ProductTable-${self:provider.stage}
     CATEGORY_TABLE: CategoryTable-${self:provider.stage}
+    DEALS_TABLE: DealsTable-${self:provider.stage}
+    ORDERS_TABLE: OrdersTable-${self:provider.stage}
 
   iam:
     role:
@@ -30,18 +32,22 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:GetItem
             - dynamodb:DeleteItem
-            - dynamodb:BatchGetItem 
+            - dynamodb:BatchGetItem
+            - dynamodb:TransactWriteItems
           Resource: 
             - !GetAtt TasksTable.Arn
             - !GetAtt RetailerTable.Arn
             - !GetAtt RetailerCounters.Arn
             - !GetAtt ProductTable.Arn
             - !GetAtt CategoryTable.Arn
+            - !GetAtt DealsTable.Arn
+            - !GetAtt OrdersTable.Arn
+
 
             #ADD THIS FOR GSI
             - !Sub "${ProductTable.Arn}/index/*"
-
-            
+            - !Sub "${DealsTable.Arn}/index/*"
+            - !Sub "${OrdersTable.Arn}/index/*"
 
   httpApi:
     cors:
@@ -267,6 +273,13 @@ functions:
           path: /products/{id}
           method: get
 
+  batchProduct:
+    handler: src/handlers/products/getProduct.batchProducts
+    events:
+      - httpApi:
+          path: /products/batch
+          method: post
+
   listProducts:
     handler: src/handlers/products/listProducts.handler
     events:
@@ -336,6 +349,85 @@ functions:
           path: /categories/{id}
           method: delete
 
+  createDeal:
+    handler: src/handlers/deals.createDeal
+    events:
+      - httpApi:
+          path: /deals
+          method: post
+
+  listDeals:
+    handler: src/handlers/deals.getDeals
+    events:
+      - httpApi:
+          path: /deals
+          method: get
+
+  updateDeal:
+    handler: src/handlers/deals.updateDeal
+    events:
+      - httpApi:
+          path: /deals/{id}
+          method: put
+
+  deleteDeal:
+    handler: src/handlers/deals.deleteDeal
+    events:
+      - httpApi:
+          path: /deals/{id}
+          method: delete
+
+  getDealById:
+    handler: src/handlers/deals.getDealById
+    events:
+      - httpApi:
+          path: /deals/{id}
+          method: get
+
+  toggleDealBanner:
+    handler: src/handlers/deals.toggleDealBanner
+    events:
+      - httpApi:
+          path: /deals/isBanner/{id}
+          method: patch
+
+  createOrder:
+    handler: src/handlers/orders/createOrder.handler
+    events:
+      - httpApi:
+          path: /api/v1/order
+          method: post
+
+  getOrder:
+    handler: src/handlers/orders/getOrder.handler
+    events:
+      - httpApi:
+          path: /api/v1/order/{orderId}
+          method: get
+
+  listOrder:
+    handler: src/handlers/orders/listOrder.handler
+    events:
+      - httpApi:
+          path: /api/v1/order
+          method: get
+
+  updateOrder:
+    handler: src/handlers/orders/updateOrder.handler
+    events:
+      - httpApi:
+          path: /api/v1/order/{orderId}
+          method: put
+
+
+  cancelOrder:
+    handler: src/handlers/orders/cancelOrder.handler
+    events:
+      - httpApi:
+          path: /api/v1/order/{orderId}
+          method: delete
+
+
 resources:
   Resources:
     TasksTable: ${file(resources/TasksTable.yml):TasksTable}
@@ -403,10 +495,63 @@ resources:
         KeySchema:
           - AttributeName: categoryId
             KeyType: HASH
-    
 
+    DealsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: DealsTable-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
 
-        
+        AttributeDefinitions:
+          - AttributeName: dealId
+            AttributeType: S
+          - AttributeName: isDeleted
+            AttributeType: S
+
+        KeySchema:
+          - AttributeName: dealId
+            KeyType: HASH
+
+        GlobalSecondaryIndexes:
+          - IndexName: isDeleted-index
+            KeySchema:
+              - AttributeName: isDeleted
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    OrdersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: OrdersTable-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+
+        AttributeDefinitions:
+          - AttributeName: orderId
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+          - AttributeName: retailerId
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+
+        KeySchema:
+          - AttributeName: orderId
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+
+        GlobalSecondaryIndexes:
+          - IndexName: retailerId-createdAt-index
+            KeySchema:
+              - AttributeName: retailerId
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+
 
 plugins:
   - serverless-offline

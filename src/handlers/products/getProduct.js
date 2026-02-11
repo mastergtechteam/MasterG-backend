@@ -78,3 +78,66 @@ export const handler = async (event) => {
     }
   }
 }
+
+// Batch Product Fetch API
+
+
+export const batchProducts = async (event) => {
+  try {
+    const body = JSON.parse(event.body)
+    const productIds = body.productIds || []
+
+    if (!productIds.length) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ success: false, message: "productIds required" })
+      }
+    }
+
+    const result = await dynamoDb.batchGet({
+      RequestItems: {
+        [process.env.PRODUCTS_TABLE]: {
+          Keys: productIds.map(id => ({ productId: id }))
+        }
+      }
+    }).promise()
+
+    const products = result.Responses[process.env.PRODUCTS_TABLE] || []
+
+    const formatted = products.map(p => ({
+      productId: p.productId,
+      name: p.name || null,
+      brand: p.brand || null,
+      description: p.description || null,
+      category: p.category || null,
+      pricing: p.pricing || null,
+      quantity: p.quantity || null,
+      stock: p.stock || null,
+      tax: p.tax || null,
+      productType: p.productType || null,
+      expiry: p.expiry || null,
+      manufacturingDetails: p.manufacturingDetails || null,
+      barcode: p.barcode || null,
+      images: p.images || [],
+      status: p.status,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt
+    }))
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        success: true,
+        count: formatted.length,
+        data: formatted
+      })
+    }
+
+  } catch (err) {
+    console.error("BATCH PRODUCT ERROR:", err)
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ success: false, error: err.message })
+    }
+  }
+}

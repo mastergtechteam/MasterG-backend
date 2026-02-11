@@ -63,17 +63,33 @@ export const handler = async (event) => {
             : null
         },
         data: items.map(p => ({
-          productId: p.productId,
-          name: p.name,
-          image: p.images?.[0] || null,
-          category: {
-            categoryId: p.categoryId,
-            name: categoryMap[p.categoryId] || "Unknown"
-          },
-          sellingPrice: p.pricing?.sellingPrice || 0,
-          stock: p.stock?.availableQuantity || 0,
-          status: p.status
-        }))
+            productId: p.productId,
+            name: p.name,
+            description: p.description || null,
+          
+            image: p.images?.[0] || null,
+          
+            category: {
+              categoryId: p.categoryId,
+              name: categoryMap[p.categoryId] || "Unknown"
+            },
+          
+            subCategory: p.subCategory || null,
+          
+            pricing: {
+              mrp: p.pricing?.mrp || 0,
+              sellingPrice: p.pricing?.sellingPrice || 0,
+              discountPercentage: p.pricing?.discountPercentage || 0
+            },
+          
+            quantity: {
+              unit: p.quantity?.unit || "PCS",
+              value: p.quantity?.value || 1
+            },
+          
+            status: p.status
+          }))
+          
       })
     };
 

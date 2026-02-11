@@ -21,14 +21,35 @@ export const handler = async (event) => {
         //Required for GSI
         categoryId: data.categoryId,
 
+        subCategory: data.subCategory,
         description: data.description,
-        pricing: data.pricing,
-        quantity: data.quantity,
-        stock: data.stock,
-        tax: data.tax,
-        productType: data.productType,
-        expiry: data.expiry,
-        manufacturingDetails: data.manufacturingDetails,
+        pricing: {
+            mrp: Number(data.pricing.mrp),
+            sellingPrice: Number(data.pricing.sellingPrice),
+            discountPercentage: Number(data.pricing.discountPercentage || 0)
+          },
+        quantity: {
+            unit: data.quantity.unit,   // KG, GM, LTR, PCS
+            value: Number(data.quantity.value)
+          },
+        stock: {
+            availableQuantity: Number(data.stock.availableQuantity),
+            minimumThreshold: Number(data.stock.minimumThreshold || 0),
+            outOfStock: data.stock.availableQuantity <= 0
+          },
+        tax: {
+            gstApplicable: data.tax.gstApplicable,
+            gstPercentage: Number(data.tax.gstPercentage || 0)
+          },
+        productType: data.productType, // PACKAGED / FRESH / PERISHABLE
+        expiry: {
+            expiryRequired: data.expiry.expiryRequired,
+            expiryDate: data.expiry.expiryDate || null
+          },
+        manufacturingDetails: {
+            manufacturerName: data.manufacturingDetails.manufacturerName,
+            countryOfOrigin: data.manufacturingDetails.countryOfOrigin
+          },
         barcode: data.barcode,
         images: data.images,
       
