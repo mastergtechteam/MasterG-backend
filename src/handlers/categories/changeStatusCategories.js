@@ -4,8 +4,7 @@ const db = new AWS.DynamoDB.DocumentClient();
 
 export const handler = async (event) => {
   try {
-    console.log("EVENT:", JSON.stringify(event));
-    console.log("TABLE:", process.env.CATEGORY_TABLE);
+  
 
     const id = event.pathParameters?.id;
 

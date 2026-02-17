@@ -25,7 +25,7 @@ export const handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, message: "Category deleted (soft)" })
+      body: JSON.stringify({ success: true, message: "Category deleted" })
     };
 
   } catch (error) {

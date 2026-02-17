@@ -1,36 +1,36 @@
-import AWS from 'aws-sdk';
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+import AWS from 'aws-sdk'
+const db = new AWS.DynamoDB.DocumentClient()
 
 export const handler = async (event) => {
   try {
-    const { id } = event.pathParameters;
+    const id = event.pathParameters?.id
 
-    await dynamoDb.update({
+    if (!id) {
+      return response(400, { message: "productId is required" })
+    }
+
+    await db.update({
       TableName: process.env.PRODUCTS_TABLE,
       Key: { productId: id },
-      UpdateExpression: "SET #status = :inactive, updatedAt = :updatedAt",
-      ExpressionAttributeNames: {
-        "#status": "status"
-      },
+      UpdateExpression: "SET isDeleted = :d, updatedAt = :u",
       ExpressionAttributeValues: {
-        ":inactive": "INACTIVE",
-        ":updatedAt": new Date().toISOString()
+        ":d": true,
+        ":u": new Date().toISOString()
       }
-    }).promise();
+    }).promise()
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        success: true,
-        message: "Product deactivated successfully"
-      })
-    };
+    return response(200, {
+      success: true,
+      message: "Product deleted"
+    })
 
   } catch (error) {
-    console.error("Soft delete error:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ success: false, message: "Error deleting product", error: error.message })
-    };
+    console.error("SOFT DELETE ERROR:", error)
+    return response(500, { message: error.message })
   }
-};
+}
+
+const response = (statusCode, body) => ({
+  statusCode,
+  body: JSON.stringify(body)
+})
