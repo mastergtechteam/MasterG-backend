@@ -57,11 +57,12 @@ export const handler = async (event) => {
         ":pricing": {
             mrp: num(data.pricing?.mrp),
             sellingPrice: num(data.pricing?.sellingPrice),
-            discountPercentage: num(data.pricing?.discountPercentage)
+            discountPercentage: num(data.pricing?.discountPercentage),
+            currency: data.pricing?.currency || "INR"
         },
 
         ":quantity": {
-            unit: data.quantity?.unit || "PCS",
+            unit: data.quantity?.unit,
             value: num(data.quantity?.value)
         },
 
@@ -85,7 +86,7 @@ export const handler = async (event) => {
         },
 
         ":manufacturingDetails": {
-          manufacturerName: data.manufacturingDetails.manufacturerName,
+          manufacturer: data.manufacturingDetails.manufacturer,
           countryOfOrigin: data.manufacturingDetails.countryOfOrigin
         },
 

@@ -110,6 +110,7 @@ export const batchProducts = async (event) => {
       brand: p.brand || null,
       description: p.description || null,
       category: p.category || null,
+      subCategory: p.subCategory || null,
       pricing: p.pricing || null,
       quantity: p.quantity || null,
       stock: p.stock || null,

@@ -11,6 +11,8 @@ provider:
   logRetentionInDays: 1
 
   environment:
+    S3_BUCKET: !Ref FileUploadBucket
+    REGION: ${self:provider.region}
     TASKS_TABLE: !Ref TasksTable
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient
@@ -26,6 +28,11 @@ provider:
       statements:
         - Effect: Allow
           Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+            - s3:ListBucket
+
             - dynamodb:Query
             - dynamodb:Scan
             - dynamodb:PutItem
@@ -48,6 +55,9 @@ provider:
             - !Sub "${ProductTable.Arn}/index/*"
             - !Sub "${DealsTable.Arn}/index/*"
             - !Sub "${OrdersTable.Arn}/index/*"
+
+            - !Sub 'arn:aws:s3:::${FileUploadBucket}/*'
+            - !Sub 'arn:aws:s3:::${FileUploadBucket}'
 
   httpApi:
     cors:
@@ -223,6 +233,13 @@ functions:
       - httpApi:
           path: /auth/users/{username}
           method: delete
+
+  getDashboardStats:
+    handler: src/handlers/dashboard/index.getDashboardStats
+    events:
+      - httpApi:
+          path: /dashboard/stats
+          method: get
 
   createRetailer:
     handler: src/handlers/retailers/createRetailer.handler
@@ -427,6 +444,90 @@ functions:
           path: /api/v1/order/{orderId}
           method: delete
 
+  search:
+    handler: src/handlers/search.handler
+    events:
+      - httpApi:
+          path: /search
+          method: get
+
+  uploadFile:
+    handler: src/handlers/utils.uploadFile
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+        Resource:
+          - !Sub 'arn:aws:s3:::${FileUploadBucket}/*'
+    events:
+      - httpApi:
+          path: /utils/upload
+          method: post
+
+  getPresignedUrl:
+    handler: src/handlers/utils.getPresignedUrl
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:GetObject
+        Resource: 
+          - !Sub 'arn:aws:s3:::${FileUploadBucket}/*'
+    events:
+      - httpApi:
+          path: /utils/presigned-url
+          method: post
+
+  deleteFile:
+    handler: src/handlers/utils.deleteFile
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:DeleteObject
+        Resource:
+          - !Sub 'arn:aws:s3:::${FileUploadBucket}/*'
+    events:
+      - httpApi:
+          path: /utils/files
+          method: delete
+
+  getFileMetadata:
+    handler: src/handlers/utils.getFileMetadata
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:GetObject
+        Resource: 
+          - !Sub 'arn:aws:s3:::${FileUploadBucket}/*'
+    events:
+      - httpApi:
+          path: /utils/file-metadata
+          method: get
+
+  getUploadCredentials:
+    handler: src/handlers/utils.getUploadCredentials
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+        Resource: 
+          - !Sub 'arn:aws:s3:::${FileUploadBucket}/*'
+    events:
+      - httpApi:
+          path: /utils/upload-credentials
+          method: post
+
+  listUserFiles:
+    handler: src/handlers/utils.listUserFiles
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:ListBucket
+        Resource:
+          - !Sub 'arn:aws:s3:::${FileUploadBucket}'
+    events:
+      - httpApi:
+          path: /utils/files
+          method: get
 
 resources:
   Resources:
@@ -552,6 +653,10 @@ resources:
             Projection:
               ProjectionType: ALL
 
+    FileUploadBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: masterg-deals-images-${self:provider.stage}
 
 plugins:
   - serverless-offline

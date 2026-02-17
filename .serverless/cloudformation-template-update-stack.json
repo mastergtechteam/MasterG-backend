@@ -100,6 +100,13 @@
         "RetentionInDays": 1
       }
     },
+    "GetDashboardStatsLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/master-g-api-dev-getDashboardStats",
+        "RetentionInDays": 1
+      }
+    },
     "CreateRetailerLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
@@ -296,6 +303,55 @@
         "RetentionInDays": 1
       }
     },
+    "SearchLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/master-g-api-dev-search",
+        "RetentionInDays": 1
+      }
+    },
+    "UploadFileLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/master-g-api-dev-uploadFile",
+        "RetentionInDays": 1
+      }
+    },
+    "GetPresignedUrlLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/master-g-api-dev-getPresignedUrl",
+        "RetentionInDays": 1
+      }
+    },
+    "DeleteFileLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/master-g-api-dev-deleteFile",
+        "RetentionInDays": 1
+      }
+    },
+    "GetFileMetadataLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/master-g-api-dev-getFileMetadata",
+        "RetentionInDays": 1
+      }
+    },
+    "GetUploadCredentialsLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/master-g-api-dev-getUploadCredentials",
+        "RetentionInDays": 1
+      }
+    },
+    "ListUserFilesLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/master-g-api-dev-listUserFiles",
+        "RetentionInDays": 1
+      }
+    },
     "IamRoleLambdaExecution": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -357,6 +413,10 @@
                 {
                   "Effect": "Allow",
                   "Action": [
+                    "s3:PutObject",
+                    "s3:GetObject",
+                    "s3:DeleteObject",
+                    "s3:ListBucket",
                     "dynamodb:Query",
                     "dynamodb:Scan",
                     "dynamodb:PutItem",
@@ -417,6 +477,12 @@
                     },
                     {
                       "Fn::Sub": "${OrdersTable.Arn}/index/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${FileUploadBucket}/*"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${FileUploadBucket}"
                     }
                   ]
                 }
@@ -445,7 +511,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/authorizers/tokenAuthorizer.handler",
         "Runtime": "nodejs18.x",
@@ -454,6 +520,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -485,7 +555,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/getTask.handler",
         "Runtime": "nodejs18.x",
@@ -494,6 +564,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -525,7 +599,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/createTask.handler",
         "Runtime": "nodejs18.x",
@@ -534,6 +608,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -565,7 +643,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/updateTask.handler",
         "Runtime": "nodejs18.x",
@@ -574,6 +652,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -605,7 +687,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.signUp",
         "Runtime": "nodejs18.x",
@@ -614,6 +696,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -645,7 +731,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.signIn",
         "Runtime": "nodejs18.x",
@@ -654,6 +740,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -685,7 +775,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.refreshToken",
         "Runtime": "nodejs18.x",
@@ -694,6 +784,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -726,7 +820,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.confirmSignUp",
         "Runtime": "nodejs18.x",
@@ -735,6 +829,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -767,7 +865,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.resendConfirmationCode",
         "Runtime": "nodejs18.x",
@@ -776,6 +874,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -808,7 +910,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.adminConfirmUser",
         "Runtime": "nodejs18.x",
@@ -817,6 +919,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -852,7 +958,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.forgotPassword",
         "Runtime": "nodejs18.x",
@@ -861,6 +967,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -893,7 +1003,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.resetPassword",
         "Runtime": "nodejs18.x",
@@ -902,6 +1012,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -934,7 +1048,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.listCognitoUsers",
         "Runtime": "nodejs18.x",
@@ -944,6 +1058,10 @@
         "Description": "List all onboarded users from Cognito User Pool",
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -979,7 +1097,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/auth.deleteUser",
         "Runtime": "nodejs18.x",
@@ -989,6 +1107,10 @@
         "Description": "Delete a user completely from Cognito User Pool",
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1019,12 +1141,56 @@
         "DeleteAuthUserLogGroup"
       ]
     },
+    "GetDashboardStatsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
+        },
+        "Handler": "src/handlers/dashboard/index.getDashboardStats",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "master-g-api-dev-getDashboardStats",
+        "MemorySize": 128,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
+            "TASKS_TABLE": {
+              "Ref": "TasksTable"
+            },
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoUserPoolClient"
+            },
+            "RETAILER_TABLE": "RetailerTable-dev",
+            "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+            "PRODUCTS_TABLE": "ProductTable-dev",
+            "CATEGORY_TABLE": "CategoryTable-dev",
+            "DEALS_TABLE": "DealsTable-dev",
+            "ORDERS_TABLE": "OrdersTable-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "GetDashboardStatsLogGroup"
+      ]
+    },
     "CreateRetailerLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/retailers/createRetailer.handler",
         "Runtime": "nodejs18.x",
@@ -1033,6 +1199,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1064,7 +1234,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/retailers/getRetailer.handler",
         "Runtime": "nodejs18.x",
@@ -1073,6 +1243,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1104,7 +1278,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/retailers/updateRetailer.handler",
         "Runtime": "nodejs18.x",
@@ -1113,6 +1287,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1144,7 +1322,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/retailers/deleteRetailer.handler",
         "Runtime": "nodejs18.x",
@@ -1153,6 +1331,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1184,7 +1366,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/retailers/listRetailers.handler",
         "Runtime": "nodejs18.x",
@@ -1193,6 +1375,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1224,7 +1410,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/products/createProduct.handler",
         "Runtime": "nodejs18.x",
@@ -1233,6 +1419,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1264,7 +1454,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/products/getProduct.handler",
         "Runtime": "nodejs18.x",
@@ -1273,6 +1463,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1304,7 +1498,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/products/getProduct.batchProducts",
         "Runtime": "nodejs18.x",
@@ -1313,6 +1507,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1344,7 +1542,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/products/listProducts.handler",
         "Runtime": "nodejs18.x",
@@ -1353,6 +1551,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1384,7 +1586,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/products/updateProduct.handler",
         "Runtime": "nodejs18.x",
@@ -1393,6 +1595,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1424,7 +1630,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/products/deleteProduct.handler",
         "Runtime": "nodejs18.x",
@@ -1433,6 +1639,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1464,7 +1674,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/products/changeProductStatus.handler",
         "Runtime": "nodejs18.x",
@@ -1473,6 +1683,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1504,7 +1718,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/categories/createCategory.handler",
         "Runtime": "nodejs18.x",
@@ -1513,6 +1727,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1545,7 +1763,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/categories/getAllCategories.handler",
         "Runtime": "nodejs18.x",
@@ -1554,6 +1772,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1585,7 +1807,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/categories/changeStatusCategories.handler",
         "Runtime": "nodejs18.x",
@@ -1594,6 +1816,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1625,7 +1851,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/categories/updateCategory.handler",
         "Runtime": "nodejs18.x",
@@ -1634,6 +1860,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1665,7 +1895,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/categories/deleteCategory.handler",
         "Runtime": "nodejs18.x",
@@ -1674,6 +1904,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1705,7 +1939,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/deals.createDeal",
         "Runtime": "nodejs18.x",
@@ -1714,6 +1948,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1745,7 +1983,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/deals.getDeals",
         "Runtime": "nodejs18.x",
@@ -1754,6 +1992,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1785,7 +2027,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/deals.updateDeal",
         "Runtime": "nodejs18.x",
@@ -1794,6 +2036,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1825,7 +2071,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/deals.deleteDeal",
         "Runtime": "nodejs18.x",
@@ -1834,6 +2080,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1865,7 +2115,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/deals.getDealById",
         "Runtime": "nodejs18.x",
@@ -1874,6 +2124,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1905,7 +2159,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/deals.toggleDealBanner",
         "Runtime": "nodejs18.x",
@@ -1914,6 +2168,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1945,7 +2203,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/orders/createOrder.handler",
         "Runtime": "nodejs18.x",
@@ -1954,6 +2212,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -1985,7 +2247,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/orders/getOrder.handler",
         "Runtime": "nodejs18.x",
@@ -1994,6 +2256,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -2025,7 +2291,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/orders/listOrder.handler",
         "Runtime": "nodejs18.x",
@@ -2034,6 +2300,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -2065,7 +2335,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/orders/updateOrder.handler",
         "Runtime": "nodejs18.x",
@@ -2074,6 +2344,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -2105,7 +2379,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
-          "S3Key": "serverless/master-g-api/dev/1770793799942-2026-02-11T07:09:59.942Z/master-g-api.zip"
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
         },
         "Handler": "src/handlers/orders/cancelOrder.handler",
         "Runtime": "nodejs18.x",
@@ -2114,6 +2388,10 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
             "TASKS_TABLE": {
               "Ref": "TasksTable"
             },
@@ -2140,426 +2418,820 @@
         "CancelOrderLogGroup"
       ]
     },
-    "TokenAuthrizerLambdaVersionptSoCNW6aw8s8IvAG0pZQQf4vXv3U8reKx5YQHHFXTA": {
+    "SearchLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
+        },
+        "Handler": "src/handlers/search.handler",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "master-g-api-dev-search",
+        "MemorySize": 128,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
+            "TASKS_TABLE": {
+              "Ref": "TasksTable"
+            },
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoUserPoolClient"
+            },
+            "RETAILER_TABLE": "RetailerTable-dev",
+            "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+            "PRODUCTS_TABLE": "ProductTable-dev",
+            "CATEGORY_TABLE": "CategoryTable-dev",
+            "DEALS_TABLE": "DealsTable-dev",
+            "ORDERS_TABLE": "OrdersTable-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "SearchLogGroup"
+      ]
+    },
+    "UploadFileLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
+        },
+        "Handler": "src/handlers/utils.uploadFile",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "master-g-api-dev-uploadFile",
+        "MemorySize": 128,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
+            "TASKS_TABLE": {
+              "Ref": "TasksTable"
+            },
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoUserPoolClient"
+            },
+            "RETAILER_TABLE": "RetailerTable-dev",
+            "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+            "PRODUCTS_TABLE": "ProductTable-dev",
+            "CATEGORY_TABLE": "CategoryTable-dev",
+            "DEALS_TABLE": "DealsTable-dev",
+            "ORDERS_TABLE": "OrdersTable-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "UploadFileIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "UploadFileIamRoleLambdaExecution",
+        "UploadFileLogGroup"
+      ]
+    },
+    "GetPresignedUrlLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
+        },
+        "Handler": "src/handlers/utils.getPresignedUrl",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "master-g-api-dev-getPresignedUrl",
+        "MemorySize": 128,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
+            "TASKS_TABLE": {
+              "Ref": "TasksTable"
+            },
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoUserPoolClient"
+            },
+            "RETAILER_TABLE": "RetailerTable-dev",
+            "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+            "PRODUCTS_TABLE": "ProductTable-dev",
+            "CATEGORY_TABLE": "CategoryTable-dev",
+            "DEALS_TABLE": "DealsTable-dev",
+            "ORDERS_TABLE": "OrdersTable-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "GetPresignedUrlIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "GetPresignedUrlIamRoleLambdaExecution",
+        "GetPresignedUrlLogGroup"
+      ]
+    },
+    "DeleteFileLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
+        },
+        "Handler": "src/handlers/utils.deleteFile",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "master-g-api-dev-deleteFile",
+        "MemorySize": 128,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
+            "TASKS_TABLE": {
+              "Ref": "TasksTable"
+            },
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoUserPoolClient"
+            },
+            "RETAILER_TABLE": "RetailerTable-dev",
+            "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+            "PRODUCTS_TABLE": "ProductTable-dev",
+            "CATEGORY_TABLE": "CategoryTable-dev",
+            "DEALS_TABLE": "DealsTable-dev",
+            "ORDERS_TABLE": "OrdersTable-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "DeleteFileIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "DeleteFileIamRoleLambdaExecution",
+        "DeleteFileLogGroup"
+      ]
+    },
+    "GetFileMetadataLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
+        },
+        "Handler": "src/handlers/utils.getFileMetadata",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "master-g-api-dev-getFileMetadata",
+        "MemorySize": 128,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
+            "TASKS_TABLE": {
+              "Ref": "TasksTable"
+            },
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoUserPoolClient"
+            },
+            "RETAILER_TABLE": "RetailerTable-dev",
+            "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+            "PRODUCTS_TABLE": "ProductTable-dev",
+            "CATEGORY_TABLE": "CategoryTable-dev",
+            "DEALS_TABLE": "DealsTable-dev",
+            "ORDERS_TABLE": "OrdersTable-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "GetFileMetadataIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "GetFileMetadataIamRoleLambdaExecution",
+        "GetFileMetadataLogGroup"
+      ]
+    },
+    "GetUploadCredentialsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
+        },
+        "Handler": "src/handlers/utils.getUploadCredentials",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "master-g-api-dev-getUploadCredentials",
+        "MemorySize": 128,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
+            "TASKS_TABLE": {
+              "Ref": "TasksTable"
+            },
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoUserPoolClient"
+            },
+            "RETAILER_TABLE": "RetailerTable-dev",
+            "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+            "PRODUCTS_TABLE": "ProductTable-dev",
+            "CATEGORY_TABLE": "CategoryTable-dev",
+            "DEALS_TABLE": "DealsTable-dev",
+            "ORDERS_TABLE": "OrdersTable-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "GetUploadCredentialsIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "GetUploadCredentialsIamRoleLambdaExecution",
+        "GetUploadCredentialsLogGroup"
+      ]
+    },
+    "ListUserFilesLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-e9b5fdaf-fa48",
+          "S3Key": "serverless/master-g-api/dev/1771312177847-2026-02-17T07:09:37.847Z/master-g-api.zip"
+        },
+        "Handler": "src/handlers/utils.listUserFiles",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "master-g-api-dev-listUserFiles",
+        "MemorySize": 128,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "S3_BUCKET": {
+              "Ref": "FileUploadBucket"
+            },
+            "REGION": "ap-south-1",
+            "TASKS_TABLE": {
+              "Ref": "TasksTable"
+            },
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoUserPoolClient"
+            },
+            "RETAILER_TABLE": "RetailerTable-dev",
+            "RETAILER_COUNTER_TABLE": "RetailerCounters-dev",
+            "PRODUCTS_TABLE": "ProductTable-dev",
+            "CATEGORY_TABLE": "CategoryTable-dev",
+            "DEALS_TABLE": "DealsTable-dev",
+            "ORDERS_TABLE": "OrdersTable-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "ListUserFilesIamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "ListUserFilesIamRoleLambdaExecution",
+        "ListUserFilesLogGroup"
+      ]
+    },
+    "TokenAuthrizerLambdaVersionjOpehu8j81ICkP0tcSkgaqAjKoUpv4y2XE4S0ZE6Cc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "TokenAuthrizerLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "GetTasksLambdaVersionYHi2ta2h5JoB2HIkYNkY7UCyECmwFzqXZqNsQvNo": {
+    "GetTasksLambdaVersionwc6TA7EtQSlh4RbUdCNQJqMnVbIWtYOKvuzjxFN4c": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetTasksLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "CreateTaskLambdaVersion7i9US4GwteusRS3A4TilkN4WAddTfz0w88wvPLJfVGw": {
+    "CreateTaskLambdaVersionMBjtvV5FxAgzs0Exm9ojRcjcI7vKJHy4m8IMYjQ28": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateTaskLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "UpdateTaskLambdaVersionbzFM7yIahOycre3pLxR1td2P6tvh5VuqNbLuOcesE": {
+    "UpdateTaskLambdaVersionEITNQbbt1jzMkGLOoovnYZ5SpW4iBlqiETji3LrHo2M": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateTaskLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "SignUpLambdaVersionuPK6rZHWlJEY38eysNnAgIXT7OYhU26adOpXHUjsp4": {
+    "SignUpLambdaVersionHIzHqCMiWekEwATklCbtD0NN1gKyzzgDcQf1n6BZSE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignUpLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "SignInLambdaVersiondXc3MvOEH23UUFabIcidopTh7s24B13uZGzul5LBhI": {
+    "SignInLambdaVersionEEmAHCBRVttrZDYoYB5aTj2wJrhHAI53KlA0VhcQ7E": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignInLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "RefreshTokenLambdaVersion5fLN3iDUjE1iJqQ1cyRgDiMC537IKA9lpwzpl7D0ZM": {
+    "RefreshTokenLambdaVersionGf9yJC7bm1NSKNvrUkbhIKwLfTHQ13o89CfIxObcbGQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "RefreshTokenLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ConfirmSignUpLambdaVersionb7AwW0KCbf9Wb8SJ7qGzFlxZoDiPhEjXe2LSSjbnU": {
+    "ConfirmSignUpLambdaVersiongXfDGoOaCiOdG0QkfRcY7rzAv9o96d59dqoBAJOPM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ConfirmSignUpLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ResendConfirmationCodeLambdaVersion5LUIjADJkF5hr9mnWSsibO5TxEr23tuYAizVrvbJJo": {
+    "ResendConfirmationCodeLambdaVersionvLN0BnDZoszXfJT26W0Mnkj3boHJzVZwHz5ovB09A": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ResendConfirmationCodeLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "AdminConfirmUserLambdaVersionVLBbDKfSYY6fMf16WniGEKYEdj9pyy2nEHCNpunA": {
+    "AdminConfirmUserLambdaVersiondv4zhFdebzwy8W2Gcbj84X4eZEx8khcy8bUROq848AU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AdminConfirmUserLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ForgotPasswordLambdaVersionvhHP7A982UlL7g6wPhmFTXCpoX1nh8FBaPw5qqeRQ": {
+    "ForgotPasswordLambdaVersionOP1rIrOGplvwUVYkc2oGGd1RUXx0S3PLsTIUjTHlc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ForgotPasswordLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ResetPasswordLambdaVersionR5TceIOdWKbJHmrFst8l4cv4eR565VYNQxwonn0iUqk": {
+    "ResetPasswordLambdaVersionEVI9CTGmMrajWzm4GDKd4Bu2F3oC7EIA2R433zTpaw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ResetPasswordLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ListCognitoUsersLambdaVersionrnjjvXkxlYLjqggINKldTpVxwXaxC0IM2RTxmBIs7A": {
+    "ListCognitoUsersLambdaVersion6GDNlEC1Co6yiDQWZFlCiFncddpGXryR7uHlRWwbVc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ListCognitoUsersLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY=",
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8=",
         "Description": "List all onboarded users from Cognito User Pool"
       }
     },
-    "DeleteAuthUserLambdaVersionGWSQexw7QfjlqxHZQV9gm38GrUvCWt3hyvjK0ZGbo": {
+    "DeleteAuthUserLambdaVersionxQBsqs8gQ3T2B5Er2pN9O066NFYIpVG201Y4nkZRW1k": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeleteAuthUserLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY=",
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8=",
         "Description": "Delete a user completely from Cognito User Pool"
       }
     },
-    "CreateRetailerLambdaVersionE0YZeZmpEDfyjySjR5m1xWUETxArk6bi6wFhWA6GhY": {
+    "GetDashboardStatsLambdaVersionFA12qUkC9wXY5a61CNo1Q3kLkBzqKCbZKOqJccih2Q": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetDashboardStatsLambdaFunction"
+        },
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
+      }
+    },
+    "CreateRetailerLambdaVersion8I3Z40aTEC5CHdto44fLDDcF3iX81YsnGJ9NXvPEc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateRetailerLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "GetRetailerLambdaVersion8A8R1ZcF0kvTIrslh4pPAsTIXMsbh6jPCmoCQVRxQk": {
+    "GetRetailerLambdaVersionnhySypgYQZUXGjlvn2w4TmjsSb5iDHlNsHCP0d6c": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetRetailerLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "UpdateRetailerLambdaVersionZqez1qAaF6eJsgwMJnXFINmU5R60XeRXH4CIaiSOwHc": {
+    "UpdateRetailerLambdaVersionHK7oYKgU9aVBnI7F3RaFCZNG5thX8OfVEFnFC2wpMHc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateRetailerLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "DeleteRetailerLambdaVersionV4dYFX1A1EWzGzEF3SIIzWJ0dEZteEBPKDn708vV8M": {
+    "DeleteRetailerLambdaVersionDH0DfAdMKTn5Bfm2o5qHnfZQXSBitPzp3joxJmoBI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeleteRetailerLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ListRetailersLambdaVersionuDNNl9jZXdhXudDMQy125tzm3hHHXyF1BAX9uFQVSKc": {
+    "ListRetailersLambdaVersionnQB4MQ497LtBJ6X41fkcLT8QfL5UeGmilMthynDL1Dw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ListRetailersLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "CreateProductLambdaVersionb6XAnkK6I5F3xbqh9By5FjI8TOIGkUx1ZflMg9Q1LQ": {
+    "CreateProductLambdaVersionqhEYrcv8jjM3GKkuI1uBj9D5x0HMeeCP1aP6utcY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateProductLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "GetProductLambdaVersionxEu6wx8MU5ZNAPvFIjABSvE0pbTsVsW5iEg50hNc": {
+    "GetProductLambdaVersionC5w7EbPSMKHWfghjYxaNn1dJOIvY2cYAXloW3d9zeUk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetProductLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "BatchProductLambdaVersionvLG4NqtawBKdBModVYk9hBP6z6sRt3dEUNx2GezPQ": {
+    "BatchProductLambdaVersionVxDoJi49VHKnRdn3BvboO8LdIk61RIZmms820ezQCg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "BatchProductLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ListProductsLambdaVersionQ2HGQ98cXRlPie5RlbKpbzDta30wdo75i7PtbCE": {
+    "ListProductsLambdaVersionboMljEqzxSHaxJDojzJSD27oRuY4NFY2AYEM6nnZY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ListProductsLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "UpdateProductLambdaVersionGveilMQno659EvGBHuSBdfLZ9tUfLaiwa36mYfhc": {
+    "UpdateProductLambdaVersion7ptVCbtvoSrfGPnun3hyIsReXeVuvkcYDHk5jJc80": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateProductLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "DeleteProductLambdaVersionoJw5KPLp1NzoPlFCN0yNgaT6wO5AgOenDFEaqpc": {
+    "DeleteProductLambdaVersionfReZTmJpieX0qYD6BJ5aO1ZhDgg1gpm7vu14BCfQ5Eg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeleteProductLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ChangeProductStatusLambdaVersionO5uIh0WOAMSZ3akrvbWAA3szkQjd4JtMglVMI1Tyx4": {
+    "ChangeProductStatusLambdaVersionkrjLwXMeThJTzrggoBkaXSGOdkG6e9fNInclzJkcGkQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ChangeProductStatusLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "CreateCategoryLambdaVersion41fzpHXUQjAi18DySdpCDtQMnxBBdXQC6fOILBjeo": {
+    "CreateCategoryLambdaVersionSft8KXzQFAzdhK1PlCqfZ2A8MG3qbtp3K4aPQ1XKM8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateCategoryLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ListCategoriesAdminLambdaVersionv2eLIBIY6SwKgKEjrZtiqYnpVpkKkWyQYfPY8Ztpg": {
+    "ListCategoriesAdminLambdaVersionNhCvThZSslkrCPmQG136WvoVVwrWFcN1BIKCimb3NI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ListCategoriesAdminLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ChangeStatusCategoriesLambdaVersion60QSpym0icCJc52Eb5HrbWKTrhr5ZiXSYISr0PmAIM": {
+    "ChangeStatusCategoriesLambdaVersionlsrfckqhBudKdUIgSZmXWp4RIO9G1pkmmjschv93TM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ChangeStatusCategoriesLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "UpdateCategoryLambdaVersionuLkkqHZfUflwX9gZCYgE4iuejyEpv8FAEMe9KBSZd4M": {
+    "UpdateCategoryLambdaVersionceae1jb8cklYt2gEYbhpH5lvuqPQdYIEkQZJkm58jfg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateCategoryLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "DeleteCategoryLambdaVersionlzwMgMmPidPntlCIhhGMG0rWrv6LYeb9Ynf2RtSrc": {
+    "DeleteCategoryLambdaVersionJKyceKLEklhJe2wFysycp3FB0i8S1KmzcwXf72iEI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeleteCategoryLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "CreateDealLambdaVersionpI5hrt8cLTID4XLoVLPLCWAG68TUiLL70bVVwyooHjA": {
+    "CreateDealLambdaVersionneloMQnk0J3GNRtW2nmHDG5r9yfnt3l202XNTNfHwis": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateDealLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ListDealsLambdaVersionl6v5yHGr4XGcf2u2opV78m9lUmQAcddXV89WRjq6I": {
+    "ListDealsLambdaVersion7hIqeenEsHHSHMJCiDleyDQJhgoJtvUUDhamgyoxBM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ListDealsLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "UpdateDealLambdaVersionk42Jws52y6xP7B72C2p0ogi9P7GCxrQFsiHM8hZJIw": {
+    "UpdateDealLambdaVersiontZheTTQxWTrjAE65LE2GlKeQob2kMNfWMGxj4Iwyg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateDealLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "DeleteDealLambdaVersionykA3dANXzrfG1Zzox6LUU4iaF4Yjmiy5rQIBwGUS5A": {
+    "DeleteDealLambdaVersionBWsdgzuZoRG5CONtqUYCKwZzVmQO0E6p7gtsAeSBu1c": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeleteDealLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "GetDealByIdLambdaVersionMlCc3r3jFuo39Gj55m5VXtaBZuZv9pFnMG4n9LOBhXM": {
+    "GetDealByIdLambdaVersion8WwFiDp74wlCsYYvWuIEeTTyaxSE1DQzFXHyone0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetDealByIdLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ToggleDealBannerLambdaVersionXucLvixfAzt4pAlaxYpQUABI40uudEKu9O1NwiQZH8": {
+    "ToggleDealBannerLambdaVersionLvdbJFV80LQ3OCRt8n43uPZnOnsEyYx6dc1XcmiiXPM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ToggleDealBannerLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "CreateOrderLambdaVersionhJbK0oKsDGXJv2WEfavGq3PPNT1JToMHBpnT2uvmMpU": {
+    "CreateOrderLambdaVersionMrbXJRP9vJJDQj9kaXJ4nfvdI0hl1hXEYwjF7HN1Xc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateOrderLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "GetOrderLambdaVersionrbn0B8aL9AKFz2kitv5vzGBaTRT0dDpIrJZ6CZbM3aI": {
+    "GetOrderLambdaVersionHWuPLrQ1VzSNC8twXaROahGidfkmzucuzMdMyCfNyOY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetOrderLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "ListOrderLambdaVersionhOSYtPHGKJLyFazSmhUlC2mC9xbiJxjnDsWkGmaSm0": {
+    "ListOrderLambdaVersionKYecjirWaoy5PoAu5Mhjx5P4CE7bD5tFxu9VfaIlRZI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ListOrderLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "UpdateOrderLambdaVersion3qQz8fblkyaqwz9YfIdshxlu0fuVPtH5TAfWfBRiwAE": {
+    "UpdateOrderLambdaVersionqSadqyQg1NfUR1N0blIzdqJq6683pInG7Vm108t1Ec": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "UpdateOrderLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
-    "CancelOrderLambdaVersion4Ru91cKgR5Dh3YIajlp3Gz5RTKwlTS9WZOIPWqKXI4": {
+    "CancelOrderLambdaVersionPLEaxuimIfHNH2dJYFrtGp6slKi7p0e55WaL6HhQr0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CancelOrderLambdaFunction"
         },
-        "CodeSha256": "RBdI4jqMbcRNwKL7EJnB+u/mCXYPDO2S7XMJqTShPaY="
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
+      }
+    },
+    "SearchLambdaVersionnx8PuPOmYwV0VRL5es9bWcwnwGalyuq3VEu2jCGF0": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SearchLambdaFunction"
+        },
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
+      }
+    },
+    "UploadFileLambdaVersionWneYZuZvPZLXskzQJlECGI8gs0LJZ1HebY3L0b6g": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "UploadFileLambdaFunction"
+        },
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
+      }
+    },
+    "GetPresignedUrlLambdaVersionKrb1CwbuQ111tHlomZypDuu1rSVIZvpyuHh2vUOsRDo": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetPresignedUrlLambdaFunction"
+        },
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
+      }
+    },
+    "DeleteFileLambdaVersionxbU8F2XYf4xreKgPOa70EFmKTGrbSDUHuKtXNT4eBM": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "DeleteFileLambdaFunction"
+        },
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
+      }
+    },
+    "GetFileMetadataLambdaVersion2UKIBoq6E69WlhQJsdjAWXlegeSlLOKRdLwl146KNo": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetFileMetadataLambdaFunction"
+        },
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
+      }
+    },
+    "GetUploadCredentialsLambdaVersionXGzY439wC5YnF6niVt4bYQxBMX3sOrta0UpTELFjlyw": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetUploadCredentialsLambdaFunction"
+        },
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
+      }
+    },
+    "ListUserFilesLambdaVersionfpxFyokGPkEssYNR0Lohm2W2tYUwWzHNWdvKspnpHk": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ListUserFilesLambdaFunction"
+        },
+        "CodeSha256": "y17cAGmXQgz5P2qaRr9vXpRhUBBE7q+ZGfB3yW5hLW8="
       }
     },
     "HttpApi": {
@@ -3618,6 +4290,81 @@
         }
       },
       "DependsOn": "HttpApiIntegrationDeleteAuthUser"
+    },
+    "GetDashboardStatsLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "GetDashboardStatsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationGetDashboardStats": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "GetDashboardStatsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRouteGetDashboardStats": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /dashboard/stats",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationGetDashboardStats"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationGetDashboardStats"
     },
     "CreateRetailerLambdaPermissionHttpApi": {
       "Type": "AWS::Lambda::Permission",
@@ -5719,6 +6466,531 @@
       },
       "DependsOn": "HttpApiIntegrationCancelOrder"
     },
+    "SearchLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SearchLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationSearch": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "SearchLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRouteGetSearch": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /search",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationSearch"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationSearch"
+    },
+    "UploadFileLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "UploadFileLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationUploadFile": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "UploadFileLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostUtilsUpload": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /utils/upload",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationUploadFile"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationUploadFile"
+    },
+    "GetPresignedUrlLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "GetPresignedUrlLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationGetPresignedUrl": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "GetPresignedUrlLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostUtilsPresignedDashurl": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /utils/presigned-url",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationGetPresignedUrl"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationGetPresignedUrl"
+    },
+    "DeleteFileLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "DeleteFileLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationDeleteFile": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "DeleteFileLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRouteDeleteUtilsFiles": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "DELETE /utils/files",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationDeleteFile"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationDeleteFile"
+    },
+    "GetFileMetadataLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "GetFileMetadataLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationGetFileMetadata": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "GetFileMetadataLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRouteGetUtilsFileDashmetadata": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /utils/file-metadata",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationGetFileMetadata"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationGetFileMetadata"
+    },
+    "GetUploadCredentialsLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "GetUploadCredentialsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationGetUploadCredentials": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "GetUploadCredentialsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostUtilsUploadDashcredentials": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /utils/upload-credentials",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationGetUploadCredentials"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationGetUploadCredentials"
+    },
+    "ListUserFilesLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ListUserFilesLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationListUserFiles": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "ListUserFilesLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRouteGetUtilsFiles": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /utils/files",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationListUserFiles"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationListUserFiles"
+    },
     "RefreshTokenIamRoleLambdaExecution": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -6448,6 +7720,486 @@
         "ManagedPolicyArns": []
       }
     },
+    "UploadFileIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-uploadFile:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${FileUploadBucket}/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "master-g-api",
+              "dev",
+              "uploadFile",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "GetPresignedUrlIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-getPresignedUrl:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${FileUploadBucket}/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "master-g-api",
+              "dev",
+              "getPresignedUrl",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "DeleteFileIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-deleteFile:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:DeleteObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${FileUploadBucket}/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "master-g-api",
+              "dev",
+              "deleteFile",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "GetFileMetadataIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-getFileMetadata:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${FileUploadBucket}/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "master-g-api",
+              "dev",
+              "getFileMetadata",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "GetUploadCredentialsIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-getUploadCredentials:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${FileUploadBucket}/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "master-g-api",
+              "dev",
+              "getUploadCredentials",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "ListUserFilesIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "master-g-api",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/master-g-api-dev-listUserFiles:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${FileUploadBucket}"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "master-g-api",
+              "dev",
+              "listUserFiles",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
     "TasksTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
@@ -6719,6 +8471,12 @@
           }
         ]
       }
+    },
+    "FileUploadBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "masterg-deals-images-dev"
+      }
     }
   },
   "Outputs": {
@@ -6731,7 +8489,7 @@
     "TokenAuthrizerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "TokenAuthrizerLambdaVersionptSoCNW6aw8s8IvAG0pZQQf4vXv3U8reKx5YQHHFXTA"
+        "Ref": "TokenAuthrizerLambdaVersionjOpehu8j81ICkP0tcSkgaqAjKoUpv4y2XE4S0ZE6Cc"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-TokenAuthrizerLambdaFunctionQualifiedArn"
@@ -6740,7 +8498,7 @@
     "GetTasksLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetTasksLambdaVersionYHi2ta2h5JoB2HIkYNkY7UCyECmwFzqXZqNsQvNo"
+        "Ref": "GetTasksLambdaVersionwc6TA7EtQSlh4RbUdCNQJqMnVbIWtYOKvuzjxFN4c"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-GetTasksLambdaFunctionQualifiedArn"
@@ -6749,7 +8507,7 @@
     "CreateTaskLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateTaskLambdaVersion7i9US4GwteusRS3A4TilkN4WAddTfz0w88wvPLJfVGw"
+        "Ref": "CreateTaskLambdaVersionMBjtvV5FxAgzs0Exm9ojRcjcI7vKJHy4m8IMYjQ28"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-CreateTaskLambdaFunctionQualifiedArn"
@@ -6758,7 +8516,7 @@
     "UpdateTaskLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateTaskLambdaVersionbzFM7yIahOycre3pLxR1td2P6tvh5VuqNbLuOcesE"
+        "Ref": "UpdateTaskLambdaVersionEITNQbbt1jzMkGLOoovnYZ5SpW4iBlqiETji3LrHo2M"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-UpdateTaskLambdaFunctionQualifiedArn"
@@ -6767,7 +8525,7 @@
     "SignUpLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignUpLambdaVersionuPK6rZHWlJEY38eysNnAgIXT7OYhU26adOpXHUjsp4"
+        "Ref": "SignUpLambdaVersionHIzHqCMiWekEwATklCbtD0NN1gKyzzgDcQf1n6BZSE"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-SignUpLambdaFunctionQualifiedArn"
@@ -6776,7 +8534,7 @@
     "SignInLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignInLambdaVersiondXc3MvOEH23UUFabIcidopTh7s24B13uZGzul5LBhI"
+        "Ref": "SignInLambdaVersionEEmAHCBRVttrZDYoYB5aTj2wJrhHAI53KlA0VhcQ7E"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-SignInLambdaFunctionQualifiedArn"
@@ -6785,7 +8543,7 @@
     "RefreshTokenLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "RefreshTokenLambdaVersion5fLN3iDUjE1iJqQ1cyRgDiMC537IKA9lpwzpl7D0ZM"
+        "Ref": "RefreshTokenLambdaVersionGf9yJC7bm1NSKNvrUkbhIKwLfTHQ13o89CfIxObcbGQ"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-RefreshTokenLambdaFunctionQualifiedArn"
@@ -6794,7 +8552,7 @@
     "ConfirmSignUpLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ConfirmSignUpLambdaVersionb7AwW0KCbf9Wb8SJ7qGzFlxZoDiPhEjXe2LSSjbnU"
+        "Ref": "ConfirmSignUpLambdaVersiongXfDGoOaCiOdG0QkfRcY7rzAv9o96d59dqoBAJOPM"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ConfirmSignUpLambdaFunctionQualifiedArn"
@@ -6803,7 +8561,7 @@
     "ResendConfirmationCodeLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ResendConfirmationCodeLambdaVersion5LUIjADJkF5hr9mnWSsibO5TxEr23tuYAizVrvbJJo"
+        "Ref": "ResendConfirmationCodeLambdaVersionvLN0BnDZoszXfJT26W0Mnkj3boHJzVZwHz5ovB09A"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ResendConfirmationCodeLambdaFunctionQualifiedArn"
@@ -6812,7 +8570,7 @@
     "AdminConfirmUserLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AdminConfirmUserLambdaVersionVLBbDKfSYY6fMf16WniGEKYEdj9pyy2nEHCNpunA"
+        "Ref": "AdminConfirmUserLambdaVersiondv4zhFdebzwy8W2Gcbj84X4eZEx8khcy8bUROq848AU"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-AdminConfirmUserLambdaFunctionQualifiedArn"
@@ -6821,7 +8579,7 @@
     "ForgotPasswordLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ForgotPasswordLambdaVersionvhHP7A982UlL7g6wPhmFTXCpoX1nh8FBaPw5qqeRQ"
+        "Ref": "ForgotPasswordLambdaVersionOP1rIrOGplvwUVYkc2oGGd1RUXx0S3PLsTIUjTHlc"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ForgotPasswordLambdaFunctionQualifiedArn"
@@ -6830,7 +8588,7 @@
     "ResetPasswordLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ResetPasswordLambdaVersionR5TceIOdWKbJHmrFst8l4cv4eR565VYNQxwonn0iUqk"
+        "Ref": "ResetPasswordLambdaVersionEVI9CTGmMrajWzm4GDKd4Bu2F3oC7EIA2R433zTpaw"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ResetPasswordLambdaFunctionQualifiedArn"
@@ -6839,7 +8597,7 @@
     "ListCognitoUsersLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListCognitoUsersLambdaVersionrnjjvXkxlYLjqggINKldTpVxwXaxC0IM2RTxmBIs7A"
+        "Ref": "ListCognitoUsersLambdaVersion6GDNlEC1Co6yiDQWZFlCiFncddpGXryR7uHlRWwbVc"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ListCognitoUsersLambdaFunctionQualifiedArn"
@@ -6848,16 +8606,25 @@
     "DeleteAuthUserLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeleteAuthUserLambdaVersionGWSQexw7QfjlqxHZQV9gm38GrUvCWt3hyvjK0ZGbo"
+        "Ref": "DeleteAuthUserLambdaVersionxQBsqs8gQ3T2B5Er2pN9O066NFYIpVG201Y4nkZRW1k"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-DeleteAuthUserLambdaFunctionQualifiedArn"
       }
     },
+    "GetDashboardStatsLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GetDashboardStatsLambdaVersionFA12qUkC9wXY5a61CNo1Q3kLkBzqKCbZKOqJccih2Q"
+      },
+      "Export": {
+        "Name": "sls-master-g-api-dev-GetDashboardStatsLambdaFunctionQualifiedArn"
+      }
+    },
     "CreateRetailerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateRetailerLambdaVersionE0YZeZmpEDfyjySjR5m1xWUETxArk6bi6wFhWA6GhY"
+        "Ref": "CreateRetailerLambdaVersion8I3Z40aTEC5CHdto44fLDDcF3iX81YsnGJ9NXvPEc"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-CreateRetailerLambdaFunctionQualifiedArn"
@@ -6866,7 +8633,7 @@
     "GetRetailerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetRetailerLambdaVersion8A8R1ZcF0kvTIrslh4pPAsTIXMsbh6jPCmoCQVRxQk"
+        "Ref": "GetRetailerLambdaVersionnhySypgYQZUXGjlvn2w4TmjsSb5iDHlNsHCP0d6c"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-GetRetailerLambdaFunctionQualifiedArn"
@@ -6875,7 +8642,7 @@
     "UpdateRetailerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateRetailerLambdaVersionZqez1qAaF6eJsgwMJnXFINmU5R60XeRXH4CIaiSOwHc"
+        "Ref": "UpdateRetailerLambdaVersionHK7oYKgU9aVBnI7F3RaFCZNG5thX8OfVEFnFC2wpMHc"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-UpdateRetailerLambdaFunctionQualifiedArn"
@@ -6884,7 +8651,7 @@
     "DeleteRetailerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeleteRetailerLambdaVersionV4dYFX1A1EWzGzEF3SIIzWJ0dEZteEBPKDn708vV8M"
+        "Ref": "DeleteRetailerLambdaVersionDH0DfAdMKTn5Bfm2o5qHnfZQXSBitPzp3joxJmoBI"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-DeleteRetailerLambdaFunctionQualifiedArn"
@@ -6893,7 +8660,7 @@
     "ListRetailersLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListRetailersLambdaVersionuDNNl9jZXdhXudDMQy125tzm3hHHXyF1BAX9uFQVSKc"
+        "Ref": "ListRetailersLambdaVersionnQB4MQ497LtBJ6X41fkcLT8QfL5UeGmilMthynDL1Dw"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ListRetailersLambdaFunctionQualifiedArn"
@@ -6902,7 +8669,7 @@
     "CreateProductLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateProductLambdaVersionb6XAnkK6I5F3xbqh9By5FjI8TOIGkUx1ZflMg9Q1LQ"
+        "Ref": "CreateProductLambdaVersionqhEYrcv8jjM3GKkuI1uBj9D5x0HMeeCP1aP6utcY"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-CreateProductLambdaFunctionQualifiedArn"
@@ -6911,7 +8678,7 @@
     "GetProductLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetProductLambdaVersionxEu6wx8MU5ZNAPvFIjABSvE0pbTsVsW5iEg50hNc"
+        "Ref": "GetProductLambdaVersionC5w7EbPSMKHWfghjYxaNn1dJOIvY2cYAXloW3d9zeUk"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-GetProductLambdaFunctionQualifiedArn"
@@ -6920,7 +8687,7 @@
     "BatchProductLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "BatchProductLambdaVersionvLG4NqtawBKdBModVYk9hBP6z6sRt3dEUNx2GezPQ"
+        "Ref": "BatchProductLambdaVersionVxDoJi49VHKnRdn3BvboO8LdIk61RIZmms820ezQCg"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-BatchProductLambdaFunctionQualifiedArn"
@@ -6929,7 +8696,7 @@
     "ListProductsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListProductsLambdaVersionQ2HGQ98cXRlPie5RlbKpbzDta30wdo75i7PtbCE"
+        "Ref": "ListProductsLambdaVersionboMljEqzxSHaxJDojzJSD27oRuY4NFY2AYEM6nnZY"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ListProductsLambdaFunctionQualifiedArn"
@@ -6938,7 +8705,7 @@
     "UpdateProductLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateProductLambdaVersionGveilMQno659EvGBHuSBdfLZ9tUfLaiwa36mYfhc"
+        "Ref": "UpdateProductLambdaVersion7ptVCbtvoSrfGPnun3hyIsReXeVuvkcYDHk5jJc80"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-UpdateProductLambdaFunctionQualifiedArn"
@@ -6947,7 +8714,7 @@
     "DeleteProductLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeleteProductLambdaVersionoJw5KPLp1NzoPlFCN0yNgaT6wO5AgOenDFEaqpc"
+        "Ref": "DeleteProductLambdaVersionfReZTmJpieX0qYD6BJ5aO1ZhDgg1gpm7vu14BCfQ5Eg"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-DeleteProductLambdaFunctionQualifiedArn"
@@ -6956,7 +8723,7 @@
     "ChangeProductStatusLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ChangeProductStatusLambdaVersionO5uIh0WOAMSZ3akrvbWAA3szkQjd4JtMglVMI1Tyx4"
+        "Ref": "ChangeProductStatusLambdaVersionkrjLwXMeThJTzrggoBkaXSGOdkG6e9fNInclzJkcGkQ"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ChangeProductStatusLambdaFunctionQualifiedArn"
@@ -6965,7 +8732,7 @@
     "CreateCategoryLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateCategoryLambdaVersion41fzpHXUQjAi18DySdpCDtQMnxBBdXQC6fOILBjeo"
+        "Ref": "CreateCategoryLambdaVersionSft8KXzQFAzdhK1PlCqfZ2A8MG3qbtp3K4aPQ1XKM8"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-CreateCategoryLambdaFunctionQualifiedArn"
@@ -6974,7 +8741,7 @@
     "ListCategoriesAdminLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListCategoriesAdminLambdaVersionv2eLIBIY6SwKgKEjrZtiqYnpVpkKkWyQYfPY8Ztpg"
+        "Ref": "ListCategoriesAdminLambdaVersionNhCvThZSslkrCPmQG136WvoVVwrWFcN1BIKCimb3NI"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ListCategoriesAdminLambdaFunctionQualifiedArn"
@@ -6983,7 +8750,7 @@
     "ChangeStatusCategoriesLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ChangeStatusCategoriesLambdaVersion60QSpym0icCJc52Eb5HrbWKTrhr5ZiXSYISr0PmAIM"
+        "Ref": "ChangeStatusCategoriesLambdaVersionlsrfckqhBudKdUIgSZmXWp4RIO9G1pkmmjschv93TM"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ChangeStatusCategoriesLambdaFunctionQualifiedArn"
@@ -6992,7 +8759,7 @@
     "UpdateCategoryLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateCategoryLambdaVersionuLkkqHZfUflwX9gZCYgE4iuejyEpv8FAEMe9KBSZd4M"
+        "Ref": "UpdateCategoryLambdaVersionceae1jb8cklYt2gEYbhpH5lvuqPQdYIEkQZJkm58jfg"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-UpdateCategoryLambdaFunctionQualifiedArn"
@@ -7001,7 +8768,7 @@
     "DeleteCategoryLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeleteCategoryLambdaVersionlzwMgMmPidPntlCIhhGMG0rWrv6LYeb9Ynf2RtSrc"
+        "Ref": "DeleteCategoryLambdaVersionJKyceKLEklhJe2wFysycp3FB0i8S1KmzcwXf72iEI"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-DeleteCategoryLambdaFunctionQualifiedArn"
@@ -7010,7 +8777,7 @@
     "CreateDealLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateDealLambdaVersionpI5hrt8cLTID4XLoVLPLCWAG68TUiLL70bVVwyooHjA"
+        "Ref": "CreateDealLambdaVersionneloMQnk0J3GNRtW2nmHDG5r9yfnt3l202XNTNfHwis"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-CreateDealLambdaFunctionQualifiedArn"
@@ -7019,7 +8786,7 @@
     "ListDealsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListDealsLambdaVersionl6v5yHGr4XGcf2u2opV78m9lUmQAcddXV89WRjq6I"
+        "Ref": "ListDealsLambdaVersion7hIqeenEsHHSHMJCiDleyDQJhgoJtvUUDhamgyoxBM"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ListDealsLambdaFunctionQualifiedArn"
@@ -7028,7 +8795,7 @@
     "UpdateDealLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateDealLambdaVersionk42Jws52y6xP7B72C2p0ogi9P7GCxrQFsiHM8hZJIw"
+        "Ref": "UpdateDealLambdaVersiontZheTTQxWTrjAE65LE2GlKeQob2kMNfWMGxj4Iwyg"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-UpdateDealLambdaFunctionQualifiedArn"
@@ -7037,7 +8804,7 @@
     "DeleteDealLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeleteDealLambdaVersionykA3dANXzrfG1Zzox6LUU4iaF4Yjmiy5rQIBwGUS5A"
+        "Ref": "DeleteDealLambdaVersionBWsdgzuZoRG5CONtqUYCKwZzVmQO0E6p7gtsAeSBu1c"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-DeleteDealLambdaFunctionQualifiedArn"
@@ -7046,7 +8813,7 @@
     "GetDealByIdLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetDealByIdLambdaVersionMlCc3r3jFuo39Gj55m5VXtaBZuZv9pFnMG4n9LOBhXM"
+        "Ref": "GetDealByIdLambdaVersion8WwFiDp74wlCsYYvWuIEeTTyaxSE1DQzFXHyone0"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-GetDealByIdLambdaFunctionQualifiedArn"
@@ -7055,7 +8822,7 @@
     "ToggleDealBannerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ToggleDealBannerLambdaVersionXucLvixfAzt4pAlaxYpQUABI40uudEKu9O1NwiQZH8"
+        "Ref": "ToggleDealBannerLambdaVersionLvdbJFV80LQ3OCRt8n43uPZnOnsEyYx6dc1XcmiiXPM"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ToggleDealBannerLambdaFunctionQualifiedArn"
@@ -7064,7 +8831,7 @@
     "CreateOrderLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateOrderLambdaVersionhJbK0oKsDGXJv2WEfavGq3PPNT1JToMHBpnT2uvmMpU"
+        "Ref": "CreateOrderLambdaVersionMrbXJRP9vJJDQj9kaXJ4nfvdI0hl1hXEYwjF7HN1Xc"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-CreateOrderLambdaFunctionQualifiedArn"
@@ -7073,7 +8840,7 @@
     "GetOrderLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetOrderLambdaVersionrbn0B8aL9AKFz2kitv5vzGBaTRT0dDpIrJZ6CZbM3aI"
+        "Ref": "GetOrderLambdaVersionHWuPLrQ1VzSNC8twXaROahGidfkmzucuzMdMyCfNyOY"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-GetOrderLambdaFunctionQualifiedArn"
@@ -7082,7 +8849,7 @@
     "ListOrderLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListOrderLambdaVersionhOSYtPHGKJLyFazSmhUlC2mC9xbiJxjnDsWkGmaSm0"
+        "Ref": "ListOrderLambdaVersionKYecjirWaoy5PoAu5Mhjx5P4CE7bD5tFxu9VfaIlRZI"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-ListOrderLambdaFunctionQualifiedArn"
@@ -7091,7 +8858,7 @@
     "UpdateOrderLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "UpdateOrderLambdaVersion3qQz8fblkyaqwz9YfIdshxlu0fuVPtH5TAfWfBRiwAE"
+        "Ref": "UpdateOrderLambdaVersionqSadqyQg1NfUR1N0blIzdqJq6683pInG7Vm108t1Ec"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-UpdateOrderLambdaFunctionQualifiedArn"
@@ -7100,10 +8867,73 @@
     "CancelOrderLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CancelOrderLambdaVersion4Ru91cKgR5Dh3YIajlp3Gz5RTKwlTS9WZOIPWqKXI4"
+        "Ref": "CancelOrderLambdaVersionPLEaxuimIfHNH2dJYFrtGp6slKi7p0e55WaL6HhQr0"
       },
       "Export": {
         "Name": "sls-master-g-api-dev-CancelOrderLambdaFunctionQualifiedArn"
+      }
+    },
+    "SearchLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SearchLambdaVersionnx8PuPOmYwV0VRL5es9bWcwnwGalyuq3VEu2jCGF0"
+      },
+      "Export": {
+        "Name": "sls-master-g-api-dev-SearchLambdaFunctionQualifiedArn"
+      }
+    },
+    "UploadFileLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "UploadFileLambdaVersionWneYZuZvPZLXskzQJlECGI8gs0LJZ1HebY3L0b6g"
+      },
+      "Export": {
+        "Name": "sls-master-g-api-dev-UploadFileLambdaFunctionQualifiedArn"
+      }
+    },
+    "GetPresignedUrlLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GetPresignedUrlLambdaVersionKrb1CwbuQ111tHlomZypDuu1rSVIZvpyuHh2vUOsRDo"
+      },
+      "Export": {
+        "Name": "sls-master-g-api-dev-GetPresignedUrlLambdaFunctionQualifiedArn"
+      }
+    },
+    "DeleteFileLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "DeleteFileLambdaVersionxbU8F2XYf4xreKgPOa70EFmKTGrbSDUHuKtXNT4eBM"
+      },
+      "Export": {
+        "Name": "sls-master-g-api-dev-DeleteFileLambdaFunctionQualifiedArn"
+      }
+    },
+    "GetFileMetadataLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GetFileMetadataLambdaVersion2UKIBoq6E69WlhQJsdjAWXlegeSlLOKRdLwl146KNo"
+      },
+      "Export": {
+        "Name": "sls-master-g-api-dev-GetFileMetadataLambdaFunctionQualifiedArn"
+      }
+    },
+    "GetUploadCredentialsLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GetUploadCredentialsLambdaVersionXGzY439wC5YnF6niVt4bYQxBMX3sOrta0UpTELFjlyw"
+      },
+      "Export": {
+        "Name": "sls-master-g-api-dev-GetUploadCredentialsLambdaFunctionQualifiedArn"
+      }
+    },
+    "ListUserFilesLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ListUserFilesLambdaVersionfpxFyokGPkEssYNR0Lohm2W2tYUwWzHNWdvKspnpHk"
+      },
+      "Export": {
+        "Name": "sls-master-g-api-dev-ListUserFilesLambdaFunctionQualifiedArn"
       }
     },
     "HttpApiId": {

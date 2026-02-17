@@ -26,7 +26,8 @@ export const handler = async (event) => {
         pricing: {
             mrp: Number(data.pricing.mrp),
             sellingPrice: Number(data.pricing.sellingPrice),
-            discountPercentage: Number(data.pricing.discountPercentage || 0)
+            discountPercentage: Number(data.pricing.discountPercentage || 0),
+            currency: data.pricing.currency || "INR"
           },
         quantity: {
             unit: data.quantity.unit,   // KG, GM, LTR, PCS
@@ -47,7 +48,7 @@ export const handler = async (event) => {
             expiryDate: data.expiry.expiryDate || null
           },
         manufacturingDetails: {
-            manufacturerName: data.manufacturingDetails.manufacturerName,
+            manufacturer: data.manufacturingDetails.manufacturer,
             countryOfOrigin: data.manufacturingDetails.countryOfOrigin
           },
         barcode: data.barcode,
