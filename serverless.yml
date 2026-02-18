@@ -317,6 +317,13 @@ functions:
       - httpApi:
           path: /products/{id}
           method: delete
+       
+  deleteProductImage:
+    handler: src/handlers/products/deleteProduct.deleteProductImage
+    events:
+      - httpApi:
+          path: /products/{id}/image
+          method: delete
 
   changeProductStatus:
     handler: src/handlers/products/changeProductStatus.handler

@@ -34,3 +34,93 @@ const response = (statusCode, body) => ({
   statusCode,
   body: JSON.stringify(body)
 })
+
+
+// Delete product image handler
+
+export const deleteProductImage = async (event) => {
+  try {
+    const body = JSON.parse(event.body || "{}");
+    const { productId, imageUrl } = body;
+
+    if (!productId || !imageUrl) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          success: false,
+          message: "productId and imageUrl are required"
+        })
+      };
+    }
+
+    // 🔹 STEP 1: Get product
+    const getParams = {
+      TableName: process.env.PRODUCTS_TABLE,
+      Key: { productId }
+    };
+
+    const result = await dynamoDb.get(getParams).promise();
+
+    if (!result.Item) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          success: false,
+          message: "Product not found"
+        })
+      };
+    }
+
+    const images = result.Item.images || [];
+
+    // 🔹 STEP 2: Remove image
+    const updatedImages = images.filter(img => img !== imageUrl);
+
+    // Agar image mili hi nahi
+    if (images.length === updatedImages.length) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          success: false,
+          message: "Image not found in product"
+        })
+      };
+    }
+
+    // 🔹 STEP 3: Update DynamoDB
+    const updateParams = {
+      TableName: process.env.PRODUCTS_TABLE,
+      Key: { productId },
+      UpdateExpression: "SET images = :images, updatedAt = :updatedAt",
+      ExpressionAttributeValues: {
+        ":images": updatedImages,
+        ":updatedAt": new Date().toISOString()
+      },
+      ReturnValues: "UPDATED_NEW"
+    };
+
+    await dynamoDb.update(updateParams).promise();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        success: true,
+        message: "Image deleted successfully",
+        images: updatedImages
+      })
+    };
+
+  } catch (error) {
+    console.error("Delete image error:", error);
+
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        success: false,
+        message: "Failed to delete image",
+        error: error.message
+      })
+    };
+  }
+};
+

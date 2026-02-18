@@ -1,29 +1,38 @@
 import AWS from 'aws-sdk';
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
+const ALLOWED_PAGE_SIZES = [10, 15, 20, 25, 50, 100];
+
 export const handler = async (event) => {
   try {
     const qs = event.queryStringParameters || {};
-    const pageSize = Number(qs.pageSize) || 20;
+
+    let pageSize = Number(qs.pageSize) || 20;
+    if (!ALLOWED_PAGE_SIZES.includes(pageSize)) {
+      pageSize = 20;
+    }
+
     const lastKey = qs.lastKey ? JSON.parse(qs.lastKey) : null;
     const categoryId = qs.categoryId;
 
     let result;
 
-    // 🎯 CASE 1: Filter exists → FAST Query
+    // 🎯 CATEGORY FILTER (FAST QUERY)
     if (categoryId) {
       result = await dynamoDb.query({
         TableName: process.env.PRODUCTS_TABLE,
         IndexName: "categoryId-createdAt-index",
         KeyConditionExpression: "categoryId = :cid",
-        ExpressionAttributeValues: { ":cid": categoryId },
+        ExpressionAttributeValues: {
+          ":cid": categoryId
+        },
         Limit: pageSize,
         ExclusiveStartKey: lastKey,
         ScanIndexForward: false
       }).promise();
     }
 
-    // 📦 CASE 2: No filter → Full list
+    // 📦 FULL LIST (SCAN)
     else {
       result = await dynamoDb.scan({
         TableName: process.env.PRODUCTS_TABLE,
@@ -34,7 +43,7 @@ export const handler = async (event) => {
 
     const items = result.Items || [];
 
-    // ===== CATEGORY NAME JOIN =====
+    /* ===== CATEGORY NAME JOIN ===== */
     const categoryIds = [...new Set(items.map(p => p.categoryId).filter(Boolean))];
     let categoryMap = {};
 
@@ -58,38 +67,32 @@ export const handler = async (event) => {
         success: true,
         pagination: {
           pageSize,
+          hasMore: !!result.LastEvaluatedKey,
           nextPageKey: result.LastEvaluatedKey
             ? JSON.stringify(result.LastEvaluatedKey)
             : null
         },
         data: items.map(p => ({
-            productId: p.productId,
-            name: p.name,
-            description: p.description || null,
-          
-            image: p.images?.[0] || null,
-          
-            category: {
-              categoryId: p.categoryId,
-              name: categoryMap[p.categoryId] || "Unknown"
-            },
-          
-            subCategory: p.subCategory || null,
-          
-            pricing: {
-              mrp: p.pricing?.mrp || 0,
-              sellingPrice: p.pricing?.sellingPrice || 0,
-              discountPercentage: p.pricing?.discountPercentage || 0
-            },
-          
-            quantity: {
-              unit: p.quantity?.unit || "PCS",
-              value: p.quantity?.value || 1
-            },
-          
-            status: p.status
-          }))
-          
+          productId: p.productId,
+          name: p.name,
+          description: p.description || null,
+          image: p.images?.[0] || null,
+          category: {
+            categoryId: p.categoryId,
+            name: categoryMap[p.categoryId] || "Unknown"
+          },
+          subCategory: p.subCategory || null,
+          pricing: {
+            mrp: p.pricing?.mrp || 0,
+            sellingPrice: p.pricing?.sellingPrice || 0,
+            discountPercentage: p.pricing?.discountPercentage || 0
+          },
+          quantity: {
+            unit: p.quantity?.unit || "PCS",
+            value: p.quantity?.value || 1
+          },
+          status: p.status
+        }))
       })
     };
 
@@ -97,7 +100,10 @@ export const handler = async (event) => {
     console.error("PRODUCT LIST ERROR:", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ success: false, error: err.message })
+      body: JSON.stringify({
+        success: false,
+        error: err.message
+      })
     };
   }
 };
