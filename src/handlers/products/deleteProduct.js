@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk'
 const db = new AWS.DynamoDB.DocumentClient()
+const s3 = new AWS.S3();
 
 export const handler = async (event) => {
   try {
@@ -40,86 +41,65 @@ const response = (statusCode, body) => ({
 
 export const deleteProductImage = async (event) => {
   try {
-    const body = JSON.parse(event.body || "{}");
-    const { productId, imageUrl } = body;
+    const { productId, imageUrl } = JSON.parse(event.body || "{}");
 
     if (!productId || !imageUrl) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          success: false,
-          message: "productId and imageUrl are required"
-        })
-      };
+      return { statusCode: 400, body: JSON.stringify({ success:false, message:"productId & imageUrl required" }) };
     }
 
-    // 🔹 STEP 1: Get product
-    const getParams = {
+    // 1️⃣ Get product
+    const product = await dynamoDb.get({
       TableName: process.env.PRODUCTS_TABLE,
       Key: { productId }
-    };
+    }).promise();
 
-    const result = await dynamoDb.get(getParams).promise();
-
-    if (!result.Item) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({
-          success: false,
-          message: "Product not found"
-        })
-      };
+    if (!product.Item) {
+      return { statusCode: 404, body: JSON.stringify({ success:false, message:"Product not found" }) };
     }
 
-    const images = result.Item.images || [];
-
-    // 🔹 STEP 2: Remove image
+    const images = product.Item.images || [];
     const updatedImages = images.filter(img => img !== imageUrl);
 
-    // Agar image mili hi nahi
     if (images.length === updatedImages.length) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          success: false,
-          message: "Image not found in product"
-        })
-      };
+      return { statusCode: 400, body: JSON.stringify({ success:false, message:"Image not found" }) };
     }
 
-    // 🔹 STEP 3: Update DynamoDB
-    const updateParams = {
+    // 2️⃣ Update DynamoDB
+    await dynamoDb.update({
       TableName: process.env.PRODUCTS_TABLE,
       Key: { productId },
       UpdateExpression: "SET images = :images, updatedAt = :updatedAt",
       ExpressionAttributeValues: {
         ":images": updatedImages,
         ":updatedAt": new Date().toISOString()
-      },
-      ReturnValues: "UPDATED_NEW"
-    };
+      }
+    }).promise();
 
-    await dynamoDb.update(updateParams).promise();
+    // 3️⃣ Delete from S3 (best effort)
+    if (imageUrl.includes(".amazonaws.com/")) {
+      const s3Key = imageUrl.split(".amazonaws.com/")[1];
+      if (s3Key) {
+        await s3.deleteObject({
+          Bucket: process.env.S3_BUCKET,
+          Key: s3Key
+        }).promise();
+      }
+    }
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         success: true,
-        message: "Image deleted successfully",
+        message: "Image deleted",
         images: updatedImages
       })
     };
 
-  } catch (error) {
-    console.error("Delete image error:", error);
-
+  } catch (err) {
+    console.error("DELETE IMAGE ERROR:", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({
-        success: false,
-        message: "Failed to delete image",
-        error: error.message
-      })
+      body: JSON.stringify({ success:false, message:"Failed to delete image" })
     };
   }
 };
