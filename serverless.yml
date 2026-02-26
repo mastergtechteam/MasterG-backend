@@ -5,7 +5,7 @@ frameworkVersion: '4'
 provider:
   name: aws
   runtime: nodejs18.x
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'prod'}
   region: ${opt:region, 'ap-south-1'}
   memorySize: 128
   logRetentionInDays: 1
@@ -22,6 +22,8 @@ provider:
     CATEGORY_TABLE: CategoryTable-${self:provider.stage}
     DEALS_TABLE: DealsTable-${self:provider.stage}
     ORDERS_TABLE: OrdersTable-${self:provider.stage}
+    PRICE_CHANGES_TABLE: PriceChangesTableV2-${self:provider.stage}
+    SERVICE_PINCODE_TABLE: ServicePincodeTable-${self:provider.stage}
 
   iam:
     role:
@@ -49,6 +51,8 @@ provider:
             - !GetAtt CategoryTable.Arn
             - !GetAtt DealsTable.Arn
             - !GetAtt OrdersTable.Arn
+            - !GetAtt PriceChangesTableNew.Arn
+            - !GetAtt ServicePincodeTable.Arn
 
 
             #ADD THIS FOR GSI
@@ -58,6 +62,7 @@ provider:
 
             - !Sub 'arn:aws:s3:::${FileUploadBucket}/*'
             - !Sub 'arn:aws:s3:::${FileUploadBucket}'
+            - !Sub "${PriceChangesTableNew.Arn}/index/*"
 
   httpApi:
     cors:
@@ -276,6 +281,14 @@ functions:
           path: /retailers
           method: get
 
+  retailerInsights:
+    handler: src/handlers/retailers/retailerInsights.handler
+    description: Retailer insights dashboard API
+    events:
+      - httpApi:
+          path: /retailer/{retailerId}/insights
+          method: get
+
   createProduct:
     handler: src/handlers/products/createProduct.handler
     events:
@@ -331,6 +344,21 @@ functions:
       - httpApi:
           path: /products/status/{id}
           method: patch
+
+  exportProducts:
+    handler: src/handlers/products/exportProducts.handler
+    events:
+      - httpApi:
+          path: /products/export
+          method: get
+
+  exportSelectProducts:
+    handler: src/handlers/products/selectProducts.handler
+    events:
+      - httpApi:
+          path: /products/select
+          method: get
+
 
   createCategory:
     handler: src/handlers/categories/createCategory.handler
@@ -415,6 +443,10 @@ functions:
           path: /deals/isBanner/{id}
           method: patch
 
+  # ===============================
+  # Orders MODULE
+  # ===============================
+
   createOrder:
     handler: src/handlers/orders/createOrder.handler
     events:
@@ -450,6 +482,22 @@ functions:
       - httpApi:
           path: /api/v1/order/{orderId}
           method: delete
+
+  getOrderStatus:
+    handler: src/handlers/orders/getOrderStatus.handler
+    description: Get order tracking status for retailer
+    events:
+      - httpApi:
+          path: /api/v1/order/{orderId}/status
+          method: get
+
+  updateOrderStatus:
+    handler: src/handlers/orders/updateOrderStatus.handler
+    description: Admin order status update with logs
+    events:
+      - httpApi:
+          path: /api/v1/order/{orderId}/status
+          method: patch
 
   search:
     handler: src/handlers/search.handler
@@ -535,6 +583,92 @@ functions:
       - httpApi:
           path: /utils/files
           method: get
+
+  # ===============================
+  # PINCODE ADMIN MODULE
+  # ===============================
+
+  adminListPincodes:
+    handler: src/handlers/pincodes/listPincodes.handler
+    events:
+      - httpApi:
+          path: /admin/pincodes
+          method: get
+
+  adminCreatePincode:
+    handler: src/handlers/pincodes/createPincode.handler
+    events:
+      - httpApi:
+          path: /admin/pincodes
+          method: post
+
+  adminUpdatePincode:
+    handler: src/handlers/pincodes/updatePincode.handler
+    events:
+      - httpApi:
+          path: /admin/pincodes/{pincodeId}
+          method: put
+
+  adminTogglePincodeStatus:
+    handler: src/handlers/pincodes/togglePincodeStatus.handler
+    events:
+      - httpApi:
+          path: /admin/pincodes/status/{pincodeId}
+          method: patch
+
+  adminDeletePincode:
+    handler: src/handlers/pincodes/deletePincode.handler
+    events:
+      - httpApi:
+          path: /admin/pincodes/{pincodeId}
+          method: delete
+
+  checkPincode:
+    handler: src/handlers/pincodes/checkPincode.handler
+    description: Check service availability by pincode
+    events:
+      - httpApi:
+          path: /service/check-pincode
+          method: post
+
+  # ===============================
+  # PriceChanges ADMIN MODULE
+  # ===============================
+
+  getPriceChanges:
+    handler: src/handlers/priceChanges/listPriceChanges.handler
+    events:
+      - httpApi:
+          path: /admin/price-changes
+          method: get
+
+  createPriceChange:
+    handler: src/handlers/priceChanges/createPriceChange.handler
+    events:
+      - httpApi:
+          path: /admin/price-changes
+          method: post
+
+  updatePriceChange:
+    handler: src/handlers/priceChanges/updatePriceChange.handler
+    events:
+      - httpApi:
+          path: /admin/price-changes/{id}
+          method: put
+
+  togglePriceChangeStatus:
+    handler: src/handlers/priceChanges/togglePriceChangeStatus.handler
+    events:
+      - httpApi:
+          path: /admin/price-changes/status/{id}
+          method: patch
+
+  deletePriceChange:
+    handler: src/handlers/priceChanges/deletePriceChange.handler
+    events:
+      - httpApi:
+          path: /admin/price-changes/{id}
+          method: delete
 
 resources:
   Resources:
@@ -664,6 +798,31 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: masterg-deals-images-${self:provider.stage}
+
+    PriceChangesTableNew:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: PriceChangesTableV2-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: priceChangeId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: priceChangeId
+            KeyType: HASH
+
+    ServicePincodeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ServicePincodeTable-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: pincode
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pincode
+            KeyType: HASH
+
 
 plugins:
   - serverless-offline
