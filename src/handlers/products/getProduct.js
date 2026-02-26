@@ -38,17 +38,36 @@ export const handler = async (event) => {
             name: p.categoryName || null
           },
 
+          subCategory: p.subCategory || null, 
+
           pricing: {
             mrp: p.pricing?.mrp || null,
             sellingPrice: p.pricing?.sellingPrice || null,
+            discountPercentage: p.pricing?.discountPercentage || 0,
             currency: p.pricing?.currency || "INR"
           },
 
-          quantity: p.quantity || null,
-          stock: p.stock || null,
-          tax: p.tax || null,
+          quantity: {
+            unit: p.quantity?.unit || "PCS",
+            value: p.quantity?.value || 1
+          },
           productType: p.productType || null,
           expiry: p.expiry || null,
+
+          stock: {
+            availableQuantity: p.stock?.availableQuantity|| 0,
+            minimumThreshold: p.stock?.minimumThreshold || 0,
+            outOfStock: p.stock?.outOfStock || false
+          },
+        tax: {
+            gstApplicable: p.tax?.gstApplicable || false,
+            gstPercentage: p.tax?.gstPercentage || 0
+          },
+
+          expiry: {
+            expiryRequired: p.expiry?.expiryRequired || false,
+            expiryDate: p.expiry?.expiryDate || null
+          },
 
           manufacturingDetails: {
             manufacturer: p.manufacturingDetails?.manufacturer || null,

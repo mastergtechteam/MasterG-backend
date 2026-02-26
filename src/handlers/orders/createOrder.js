@@ -47,7 +47,6 @@ export const handler = async (event) => {
     });
 
     const orderId = "ORD" + Date.now();
-    const createdAt = new Date().toISOString();
 
     const orderItem = {
       orderId,
@@ -70,8 +69,19 @@ export const handler = async (event) => {
       },
       delivery: body.delivery,
       orderStatus: "PLACED",
+
+      orderStatusLogs: [
+        {
+          status: "PLACED",
+          by: "SYSTEM",          // SYSTEM / ADMIN / RETAILER
+          remark: null,
+          at: now
+        }
+      ],
+      
       isDeleted: false,
-      createdAt
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     /* ================= TRANSACTION WRITE ================= */
